@@ -2,44 +2,64 @@ package com.app.shovonh.mooveez;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-public class MainActivity extends AppCompatActivity implements MoviesFragment.Callback {
+public class MainActivity extends AppCompatActivity implements PopularMoviesFragment.Callback{
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final int NUM_PAGES = 2;
+
+    /**
+     * The pager widget, which handles animation and allows swiping horizontally to access previous
+     * and next wizard steps.
+     */
+    private ViewPager mPager;
+
+    /**
+     * The pager adapter, which provides the pages to the view pager widget.
+     */
+    private PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.app.shovonh.mooveez.R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
-//        if (savedInstanceState == null) {
-//           getSupportFragmentManager().beginTransaction()
-//                   .add(R.id.container, new MoviesFragment())
-//                   .commit();
-//        }
-        Toolbar toolbar = (Toolbar) findViewById(com.app.shovonh.mooveez.R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Log.v(LOG_TAG,"onCreate - MainActivity");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(com.app.shovonh.mooveez.R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(mPagerAdapter);
+
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onPageSelected(int position) {
+                Log.v(LOG_TAG, "Pager on page: " + position);
+                // When changing pages, reset the action bar actions since they are dependent
+                // on which page is currently active. An alternative approach is to have each
+                // fragment expose actions itself (rather than the activity exposing actions),
+                // but for simplicity, the activity provides the actions in this sample.
+                //invalidateOptionsMenu();
             }
         });
+
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.app.shovonh.mooveez.R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -64,4 +84,29 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.Ca
         intent.putExtra(id, movieDetails);
         startActivity(intent);
     }
+
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Log.v(LOG_TAG, "getItem called with position " + position);
+            switch (position){
+                case 0: return new PopularMoviesFragment();
+                case 1: return new TopMoviesFragment();
+               // case 2: return new NewMoviesFragment().newInstance(position);
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
+    }
+
+
+
 }

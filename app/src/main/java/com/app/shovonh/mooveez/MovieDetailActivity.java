@@ -15,10 +15,10 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null){
-            //Log.v(LOG_TAG, Arrays.deepToString(getIntent().getStringArrayExtra(MoviesFragment.MOVIE_DETAILS_BUNDLE_ID)));
+            //Log.v(LOG_TAG, Arrays.deepToString(getIntent().getStringArrayExtra(PopularMoviesFragment.MOVIE_DETAILS_BUNDLE_ID)));
             Fragment fragment =
-                    new MovieDetailsFrag().newInstance(getIntent().getStringArrayExtra(MoviesFragment.MOVIE_DETAILS_BUNDLE_ID));
-            getSupportFragmentManager().beginTransaction().add(com.app.shovonh.mooveez.R.id.movie_details_activity, fragment).commit();
+                    new MovieDetailsFrag().newInstance(getIntent().getStringArrayExtra(PopularMoviesFragment.MOVIE_DETAILS_BUNDLE_ID));
+            getSupportFragmentManager().beginTransaction().add(R.id.movie_details_activity, fragment).commit();
 
         }
 

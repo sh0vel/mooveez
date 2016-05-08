@@ -25,9 +25,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-public class MoviesFragment extends Fragment {
-    public ImageAdapter _gridAdapter;
-    public ArrayList<MovieObj> _moviesList;
+public class TopMoviesFragment extends Fragment {
+    private  ImageAdapter _gridAdapter;
+    private ArrayList<MovieObj> _moviesList;
     public static String MOVIE_DETAILS_BUNDLE_ID = "movedetails";
 
     @Override
@@ -57,12 +57,12 @@ public class MoviesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(com.app.shovonh.mooveez.R.layout.fragment_movies, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_top_rated_movies, container, false);
 
         _moviesList = new ArrayList<>();
 
         _gridAdapter = new ImageAdapter(getActivity(), _moviesList);
-        GridView gridView = (GridView) rootView.findViewById(com.app.shovonh.mooveez.R.id.gridView);
+        GridView gridView = (GridView) rootView.findViewById(R.id.gridViewTop);
         gridView.setAdapter(_gridAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -81,7 +81,7 @@ public class MoviesFragment extends Fragment {
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         private MovieObj[] getMovieDataFromJson(String _movieJsonStr)
-            throws JSONException{
+                throws JSONException {
 
             final String TMD_RESULTS = "results";
             final String TMD_POSTER = "poster_path";
@@ -108,11 +108,11 @@ public class MoviesFragment extends Fragment {
                 _movies[i] = movie;
             }
 
-         //  for (MovieObj m : _movies)
-           //     Log.v(LOG_TAG, "Poster: " + m.cover);
+            //  for (MovieObj m : _movies)
+            //     Log.v(LOG_TAG, "Poster: " + m.cover);
 
 
-           return _movies;
+            return _movies;
         }
 
 
@@ -126,7 +126,7 @@ public class MoviesFragment extends Fragment {
 
 
             try{
-                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
                 final String API_KEY = "api_key";
                 final String PAGE = "page";
 
@@ -197,4 +197,3 @@ public class MoviesFragment extends Fragment {
         }
     }
 }
-
