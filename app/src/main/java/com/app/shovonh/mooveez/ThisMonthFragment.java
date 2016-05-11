@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.TimeZone;
 
 import hirondelle.date4j.DateTime;
@@ -105,6 +106,7 @@ public class ThisMonthFragment extends Fragment {
             final String TMD_TITLE = "title";
             final String TMD_RATING = "vote_average";
             final String TMD_BACKDROP = "backdrop_path";
+            final String TMD_GENRE_ARRAY = "genre_ids";
 
             JSONObject _moviesJson = new JSONObject(_movieJsonStr);
             JSONArray _moviesArray = _moviesJson.getJSONArray(TMD_RESULTS);
@@ -112,6 +114,8 @@ public class ThisMonthFragment extends Fragment {
             MovieObj[] _movies = new MovieObj[_moviesArray.length()];
             for (int i = 0; i < _moviesArray.length(); i++) {
                 String title, description, release, cover, backdrop;
+                int [] genres;
+
 
                 JSONObject _movieObject = _moviesArray.getJSONObject(i);
                 title = _movieObject.getString(TMD_TITLE);
@@ -120,8 +124,16 @@ public class ThisMonthFragment extends Fragment {
                 cover = _movieObject.getString(TMD_POSTER);
                 backdrop = _movieObject.getString(TMD_BACKDROP);
 
+                JSONArray genreArray = _movieObject.getJSONArray(TMD_GENRE_ARRAY);
+                int s = genreArray.length();
+                genres = new int [s];
+                for (int j = 0; j < s; j++){
+                    genres[j] = genreArray.getInt(j);
+                }
+                Log.v(LOG_TAG, Arrays.toString(genres));
 
-                MovieObj movie = new MovieObj(title, description, release, cover, backdrop);
+
+                MovieObj movie = new MovieObj(title, description, release, cover, backdrop, genres);
                 _movies[i] = movie;
             }
 
