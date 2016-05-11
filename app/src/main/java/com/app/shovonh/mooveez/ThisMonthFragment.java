@@ -1,5 +1,6 @@
 package com.app.shovonh.mooveez;
 
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,65 +24,79 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
+import hirondelle.date4j.DateTime;
 
-public class TopMoviesFragment extends Fragment {
-    private  ImageAdapter _gridAdapter;
-    private ArrayList<MovieObj> _moviesList;
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ThisMonthFragment extends Fragment {
+    private static final String LOG_TAG = ThisMonthFragment.class.getSimpleName();
+
+    public static ImageAdapter adapter;
+    public static ArrayList<MovieObj> thisMonthsMovieList;
     public static String MOVIE_DETAILS_BUNDLE_ID = "movedetails";
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
+    public ThisMonthFragment() {
+        // Required empty public constructor
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        fetchMoviesTask.execute();
-
+    public ThisMonthFragment newInstance(int page_number){
+        ThisMonthFragment fragment = new ThisMonthFragment();
+        Bundle args = new Bundle();
+       // args.putInt(PAGE_NUM, page_number);
+        fragment.setArguments(args);
+        return fragment;
     }
 
-
-    public interface Callback {
-        /**
-         * DetailFragmentCallback for when an item has been selected.
-         */
+    public interface Callback{
         public void onItemSelected(String id, String [] movieDetails);
     }
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FetchThisMonthsMovies task = new FetchThisMonthsMovies();
+        task.execute();
+
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_top_rated_movies, container, false);
+        View view = inflater.inflate(R.layout.fragment_this_month, container, false);
 
-        _moviesList = new ArrayList<>();
+            thisMonthsMovieList = new ArrayList<>();
 
-        _gridAdapter = new ImageAdapter(getActivity(), _moviesList);
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridViewTop);
-        gridView.setAdapter(_gridAdapter);
+            adapter = new ImageAdapter(getActivity(), thisMonthsMovieList);
+            GridView gridView = (GridView) view.findViewById(R.id.thisMonthGrid);
+            gridView.setAdapter(adapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MovieObj m = _moviesList.get(i);
-                String [] movieDetails = {m.cover, m.title, m.releaseDate, m.rating, m.description};
-                ((Callback) getActivity()).onItemSelected(MOVIE_DETAILS_BUNDLE_ID, movieDetails);
-            }
-        });
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    MovieObj m = thisMonthsMovieList.get(i);
+                    String [] movieDetails = {m.cover, m.title, m.releaseDate, m.description, m.backdrop};
+                    ((Callback) getActivity()).onItemSelected(MOVIE_DETAILS_BUNDLE_ID, movieDetails);
+                }
+            });
 
-
-        return rootView;
+        return view;
     }
-    public class FetchMoviesTask extends AsyncTask<MovieObj, Void, MovieObj[]> {
-        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
+
+
+
+////////////////////////
+    public static class FetchThisMonthsMovies extends AsyncTask<MovieObj, Void, MovieObj[]> {
+        private final String LOG_TAG = FetchThisMonthsMovies.class.getSimpleName();
+
 
         private MovieObj[] getMovieDataFromJson(String _movieJsonStr)
                 throws JSONException {
+
 
             final String TMD_RESULTS = "results";
             final String TMD_POSTER = "poster_path";
@@ -89,33 +104,43 @@ public class TopMoviesFragment extends Fragment {
             final String TMD_RELEASE = "release_date";
             final String TMD_TITLE = "title";
             final String TMD_RATING = "vote_average";
+            final String TMD_BACKDROP = "backdrop_path";
 
             JSONObject _moviesJson = new JSONObject(_movieJsonStr);
             JSONArray _moviesArray = _moviesJson.getJSONArray(TMD_RESULTS);
 
             MovieObj[] _movies = new MovieObj[_moviesArray.length()];
-            for (int i = 0; i < _moviesArray.length(); i++){
-                String title, description, release, rating, cover;
+            for (int i = 0; i < _moviesArray.length(); i++) {
+                String title, description, release, cover, backdrop;
 
                 JSONObject _movieObject = _moviesArray.getJSONObject(i);
                 title = _movieObject.getString(TMD_TITLE);
                 description = _movieObject.getString(TMD_DESCRIPTION);
                 release = _movieObject.getString(TMD_RELEASE);
-                rating = Integer.toString(_movieObject.getInt(TMD_RATING));
                 cover = _movieObject.getString(TMD_POSTER);
+                backdrop = _movieObject.getString(TMD_BACKDROP);
 
-                MovieObj movie = new MovieObj(title, description, release, rating, cover);
+
+                MovieObj movie = new MovieObj(title, description, release, cover, backdrop);
                 _movies[i] = movie;
             }
-
-            //  for (MovieObj m : _movies)
-            //     Log.v(LOG_TAG, "Poster: " + m.cover);
-
 
             return _movies;
         }
 
 
+
+////////////////////
+        private String formatedDate(int o){
+            DateTime dt = DateTime.now(TimeZone.getDefault());
+            String start = dt.getStartOfMonth().format("YYYY-MM-DD");
+            String end = dt.getEndOfMonth().format("YYYY-MM-DD");
+            if (o==0)
+                return start;
+            return end;
+        }
+
+///////////////////////////
         @Override
         protected MovieObj[] doInBackground(MovieObj... m) {
             HttpURLConnection urlConnection = null;
@@ -126,13 +151,19 @@ public class TopMoviesFragment extends Fragment {
 
 
             try{
-                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
+                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String API_KEY = "api_key";
                 final String PAGE = "page";
+                final String RELEASE_DATE_GTE = "primary_release_date.gte";
+                final String RELEASE_DATE_LTE = "primary_release_date.lte";
+                final String SORT_BY = "sort_by";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendQueryParameter(API_KEY, BuildConfig.THE_MOVIE_DB_API_KEY)
                         .appendQueryParameter(PAGE, "1")
+                        .appendQueryParameter(RELEASE_DATE_GTE, formatedDate(0))
+                        .appendQueryParameter(RELEASE_DATE_LTE, formatedDate(1))
+                        .appendQueryParameter(SORT_BY, "popularity.desc")
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -160,7 +191,7 @@ public class TopMoviesFragment extends Fragment {
 
                 _resultsJsonStr = buffer.toString();
 
-                Log.v(LOG_TAG, "Result JSON STR: " + _resultsJsonStr);
+                // Log.v(LOG_TAG, "Result JSON STR: " + _resultsJsonStr);
 
             }catch (IOException e){
                 Log.e("MovieFragment", "Error ", e);
@@ -190,10 +221,12 @@ public class TopMoviesFragment extends Fragment {
         @Override
         protected void onPostExecute(MovieObj[] movieObjs) {
             super.onPostExecute(movieObjs);
-            for (MovieObj m : movieObjs)
-                _moviesList.add(m);
-            _gridAdapter.setData(_moviesList);
-
+            for (MovieObj m : movieObjs) {
+                thisMonthsMovieList.add(m);
+                adapter.setData(thisMonthsMovieList);
+            }
         }
     }
+
+
 }

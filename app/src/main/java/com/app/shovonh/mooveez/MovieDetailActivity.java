@@ -17,7 +17,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         if (savedInstanceState == null){
             //Log.v(LOG_TAG, Arrays.deepToString(getIntent().getStringArrayExtra(PopularMoviesFragment.MOVIE_DETAILS_BUNDLE_ID)));
             Fragment fragment =
-                    new MovieDetailsFrag().newInstance(getIntent().getStringArrayExtra(PopularMoviesFragment.MOVIE_DETAILS_BUNDLE_ID));
+                    new MovieDetailsFrag().newInstance(getIntent().getStringArrayExtra(ThisMonthFragment.MOVIE_DETAILS_BUNDLE_ID));
             getSupportFragmentManager().beginTransaction().add(R.id.movie_details_activity, fragment).commit();
 
         }
