@@ -18,7 +18,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'THE_MOVIE_DB_API_KEY', "\"fa6548d1938a8fee536b7f04aa505fd4\""
+        it.buildConfigField 'String', 'THE_MOVIE_DB_API_KEY', "API-KEY-HERE"
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/res/assets', 'src/assets/'] } }
 }
