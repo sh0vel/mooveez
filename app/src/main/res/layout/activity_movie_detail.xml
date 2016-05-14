@@ -2,16 +2,15 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movie_details_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.app.shovonh.mooveez.MovieDetailActivity"
-    android:id="@+id/movie_details_activity">
+    tools:context="com.app.shovonh.mooveez.MovieDetailActivity">
 
-    <include
-        layout="@layout/toolbar_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
+
+        <!-- Toolbar is the actual app bar with text and the action items -->
 
 
 
@@ -22,6 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_save" />
+        android:src="@android:drawable/ic_menu_my_calendar" />
 
 </android.support.design.widget.CoordinatorLayout>

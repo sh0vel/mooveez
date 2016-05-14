@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,26 +31,28 @@ public class MovieDetailsFrag extends Fragment {
 
     // TODO: Rename and change types of parameters
     //array 0:poster 1:title 2:release 3:rating 4:description 5:trailer1 6:trailer2
-    private String movieDetails [];
+    private String movieDetails[];
 
 
     private OnFragmentInteractionListener mListener;
 
-    private static ImageView imgPoster;
-    private static TextView tvTitle, tvRelease, tvRating, tvDescription, tvTrailer1, tvTrailer2;
+    private static ImageView imgPoster, imgBackdrop;
+    private static TextView tvTitle, tvRelease, tvRating, tvDescription, tvTrailer1, tvTrailer2, tvGenres;
 
     public MovieDetailsFrag() {
         // Required empty public constructor
     }
 
-    static void initializeView(View view){
-        imgPoster = (ImageView) view.findViewById(com.app.shovonh.mooveez.R.id.poster);
-        tvTitle = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.title);
-        tvRelease = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.release_date);
-        tvRating = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.rating);
-        tvDescription = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.description);
-        tvTrailer1 = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.trailer1);
-        tvTrailer2 = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.trailer2);
+    static void initializeView(View view) {
+//        imgPoster = (ImageView) view.findViewById(com.app.shovonh.mooveez.R.id.poster);
+        tvTitle = (TextView) view.findViewById(R.id.movie_title);
+        tvRelease = (TextView) view.findViewById(R.id.release);
+//        tvRating = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.rating);
+        tvDescription = (TextView) view.findViewById(R.id.description);
+//        tvTrailer1 = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.trailer1);
+//        tvTrailer2 = (TextView) view.findViewById(com.app.shovonh.mooveez.R.id.trailer2);
+        imgBackdrop = (ImageView) view.findViewById(R.id.backdrop);
+        tvGenres = (TextView) view.findViewById(R.id.genres);
     }
 
 
@@ -78,11 +81,18 @@ public class MovieDetailsFrag extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(com.app.shovonh.mooveez.R.layout.fragment_movie_details, container, false);
         initializeView(view);
-        Picasso.with(getContext()).load(movieDetails[0]).into(imgPoster);
+        Log.v(LOG_TAG, movieDetails[4]);
+        if (!movieDetails[4].equals("http://image.tmdb.org/t/p/w500/null"))
+            Picasso.with(getContext()).load(movieDetails[4]).into(imgBackdrop);
+        else
+            Picasso.with(getContext()).load(movieDetails[0]).into(imgBackdrop);
+
         tvTitle.setText(movieDetails[1]);
-        tvRelease.setText(movieDetails[2]);
-        tvRating.setText(movieDetails[3]);
-        tvDescription.setText(movieDetails[4]);
+        tvRelease.setText(Utilities.dateFormatter(movieDetails[2]));
+//        tvRating.setText(movieDetails[3]);
+        tvDescription.setText(movieDetails[3]);
+        tvGenres.setText(movieDetails[5]);
+        Log.v(LOG_TAG, movieDetails[5]);
 
         return view;
     }
@@ -116,7 +126,7 @@ public class MovieDetailsFrag extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

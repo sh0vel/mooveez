@@ -20,6 +20,7 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'THE_MOVIE_DB_API_KEY', "\"fa6548d1938a8fee536b7f04aa505fd4\""
     }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/res/assets', 'src/assets/'] } }
 }
 
 repositories {
@@ -30,8 +31,10 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:gridlayout-v7:23.3.0'
     compile files('libs/date4j.jar')
+    compile 'com.github.halysongoncalves:pugnotification:1.8.1'
 }

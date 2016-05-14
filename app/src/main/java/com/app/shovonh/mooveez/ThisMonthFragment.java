@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.TimeZone;
 
 import hirondelle.date4j.DateTime;
@@ -43,16 +42,16 @@ public class ThisMonthFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public ThisMonthFragment newInstance(int page_number){
+    public ThisMonthFragment newInstance(int page_number) {
         ThisMonthFragment fragment = new ThisMonthFragment();
         Bundle args = new Bundle();
-       // args.putInt(PAGE_NUM, page_number);
+        // args.putInt(PAGE_NUM, page_number);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public interface Callback{
-        public void onItemSelected(String id, String [] movieDetails);
+    public interface Callback {
+        public void onItemSelected(String id, String[] movieDetails);
     }
 
 
@@ -70,27 +69,26 @@ public class ThisMonthFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_this_month, container, false);
 
-            thisMonthsMovieList = new ArrayList<>();
+        thisMonthsMovieList = new ArrayList<>();
 
-            adapter = new ImageAdapter(getActivity(), thisMonthsMovieList);
-            GridView gridView = (GridView) view.findViewById(R.id.thisMonthGrid);
-            gridView.setAdapter(adapter);
+        adapter = new ImageAdapter(getActivity(), thisMonthsMovieList);
+        GridView gridView = (GridView) view.findViewById(R.id.thisMonthGrid);
+        gridView.setAdapter(adapter);
 
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    MovieObj m = thisMonthsMovieList.get(i);
-                    String [] movieDetails = {m.cover, m.title, m.releaseDate, m.description, m.backdrop};
-                    ((Callback) getActivity()).onItemSelected(MOVIE_DETAILS_BUNDLE_ID, movieDetails);
-                }
-            });
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MovieObj m = thisMonthsMovieList.get(i);
+                String[] movieDetails = {m.cover, m.title, m.releaseDate, m.description, m.backdrop, Utilities.genresToString(m.genres)};
+                ((Callback) getActivity()).onItemSelected(MOVIE_DETAILS_BUNDLE_ID, movieDetails);
+            }
+        });
 
         return view;
     }
 
 
-
-////////////////////////
+    ////////////////////////
     public static class FetchThisMonthsMovies extends AsyncTask<MovieObj, Void, MovieObj[]> {
         private final String LOG_TAG = FetchThisMonthsMovies.class.getSimpleName();
 
@@ -111,48 +109,54 @@ public class ThisMonthFragment extends Fragment {
             JSONObject _moviesJson = new JSONObject(_movieJsonStr);
             JSONArray _moviesArray = _moviesJson.getJSONArray(TMD_RESULTS);
 
-            MovieObj[] _movies = new MovieObj[_moviesArray.length()];
+            ArrayList<MovieObj> _movies = new ArrayList<>();
             for (int i = 0; i < _moviesArray.length(); i++) {
                 String title, description, release, cover, backdrop;
-                int [] genres;
+                int[] genres;
 
 
                 JSONObject _movieObject = _moviesArray.getJSONObject(i);
-                title = _movieObject.getString(TMD_TITLE);
-                description = _movieObject.getString(TMD_DESCRIPTION);
-                release = _movieObject.getString(TMD_RELEASE);
                 cover = _movieObject.getString(TMD_POSTER);
                 backdrop = _movieObject.getString(TMD_BACKDROP);
+                if (!cover.equals("null") && !backdrop.equals("null")) {
+                    title = _movieObject.getString(TMD_TITLE);
+                    description = _movieObject.getString(TMD_DESCRIPTION);
+                    release = _movieObject.getString(TMD_RELEASE);
+                    JSONArray genreArray = _movieObject.getJSONArray(TMD_GENRE_ARRAY);
+                    int s = genreArray.length();
+                    genres = new int[s];
+                    for (int j = 0; j < s; j++) {
+                        genres[j] = genreArray.getInt(j);
+                    }
 
-                JSONArray genreArray = _movieObject.getJSONArray(TMD_GENRE_ARRAY);
-                int s = genreArray.length();
-                genres = new int [s];
-                for (int j = 0; j < s; j++){
-                    genres[j] = genreArray.getInt(j);
+
+                    MovieObj movie = new MovieObj(title, description, release, cover, backdrop, genres);
+                    _movies.add(movie);
                 }
-                Log.v(LOG_TAG, Arrays.toString(genres));
 
-
-                MovieObj movie = new MovieObj(title, description, release, cover, backdrop, genres);
-                _movies[i] = movie;
             }
 
-            return _movies;
+            MovieObj [] array = new MovieObj[_movies.size()];
+            for (int i = 0; i < _movies.size(); i++){
+                array[i] = _movies.get(i);
+            }
+            Log.v(LOG_TAG, "Array size: " + array.length);
+
+            return array;
         }
 
 
-
-////////////////////
-        private String formatedDate(int o){
+        ////////////////////
+        private String formatedDate(int o) {
             DateTime dt = DateTime.now(TimeZone.getDefault());
             String start = dt.getStartOfMonth().format("YYYY-MM-DD");
             String end = dt.getEndOfMonth().format("YYYY-MM-DD");
-            if (o==0)
+            if (o == 0)
                 return start;
             return end;
         }
 
-///////////////////////////
+        ///////////////////////////
         @Override
         protected MovieObj[] doInBackground(MovieObj... m) {
             HttpURLConnection urlConnection = null;
@@ -162,7 +166,7 @@ public class ThisMonthFragment extends Fragment {
             String format = "json";
 
 
-            try{
+            try {
                 final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String API_KEY = "api_key";
                 final String PAGE = "page";
@@ -193,11 +197,11 @@ public class ThisMonthFragment extends Fragment {
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
-                while ((line = reader.readLine()) != null){
+                while ((line = reader.readLine()) != null) {
                     buffer.append((line + "\n"));
                 }
 
-                if(buffer.length() == 0){
+                if (buffer.length() == 0) {
                     _resultsJsonStr = null;
                 }
 
@@ -205,16 +209,16 @@ public class ThisMonthFragment extends Fragment {
 
                 // Log.v(LOG_TAG, "Result JSON STR: " + _resultsJsonStr);
 
-            }catch (IOException e){
+            } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
                 _resultsJsonStr = null;
-            }finally {
-                if(urlConnection != null)
+            } finally {
+                if (urlConnection != null)
                     urlConnection.disconnect();
-                if (reader != null){
-                    try{
+                if (reader != null) {
+                    try {
                         reader.close();
-                    }catch (final IOException e){
+                    } catch (final IOException e) {
                         Log.e("MoviesFragment", "Error closingstream", e);
                     }
                 }
@@ -223,7 +227,7 @@ public class ThisMonthFragment extends Fragment {
 
             try {
                 return getMovieDataFromJson(_resultsJsonStr);
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }

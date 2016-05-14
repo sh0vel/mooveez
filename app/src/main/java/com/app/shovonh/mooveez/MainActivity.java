@@ -7,9 +7,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.app.shovonh.mooveez.data.MovieDBHelper;
+
 public class MainActivity extends AppCompatActivity implements ThisMonthFragment.Callback {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    public static MovieDBHelper dbHelper;
 
 
     @Override
@@ -18,6 +21,9 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Month of May");
+
+        dbHelper = new MovieDBHelper(getBaseContext());
 
 
 
