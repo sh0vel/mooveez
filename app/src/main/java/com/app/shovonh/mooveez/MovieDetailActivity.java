@@ -32,19 +32,19 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         if (Utilities.alreadyReleased(bundle[2])){
-
-        }
+            fab.setVisibility(View.INVISIBLE);
+        }else fab.setVisibility(View.VISIBLE);
 
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Snackbar sb = Snackbar.make(view, "Notification Created", Snackbar.LENGTH_LONG);
+                Snackbar sb = Snackbar.make(view, "Release reminder set!", Snackbar.LENGTH_LONG);
                 sb.show();
 
-                Intent intent = new Intent(view.getContext(), Notification.class);
+                Intent intent = new Intent(view.getContext(), Notifications.class);
                 intent.putExtra(ThisMonthFragment.MOVIE_DETAILS_BUNDLE_ID,bundle);
-                PendingIntent pi = PendingIntent.getBroadcast(view.getContext(), 0, intent, 0);
+                PendingIntent pi = PendingIntent.getBroadcast(view.getContext(),Integer.parseInt(bundle[6]), intent, PendingIntent.FLAG_ONE_SHOT);
 
                 AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000, pi);
@@ -55,7 +55,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         if (savedInstanceState == null){
 
             Fragment fragment =
-                    new MovieDetailsFrag().newInstance(bundle;
+                    new MovieDetailsFrag().newInstance(bundle);
             getSupportFragmentManager().beginTransaction().add(R.id.movie_details_activity, fragment).commit();
 
         }

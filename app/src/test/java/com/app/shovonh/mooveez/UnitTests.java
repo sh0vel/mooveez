@@ -1,20 +1,19 @@
 package com.app.shovonh.mooveez;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.TimeZone;
 
 import hirondelle.date4j.DateTime;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
-public class ExampleUnitTest {
+public class UnitTests {
     @Test
     public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+        Assert.assertEquals(4, 2 + 2);
     }
 
     @Test
@@ -23,8 +22,8 @@ public class ExampleUnitTest {
             DateTime dt = DateTime.now(TimeZone.getDefault());
             String start = dt.getStartOfMonth().format("YYYY-MM-DD");
             String end = dt.getEndOfMonth().format("YYYY-MM-DD");
-            assertEquals("2016-05-01", start);
-            assertEquals("2016-05-31", end);
+            Assert.assertEquals("2016-05-01", start);
+            Assert.assertEquals("2016-05-31", end);
     }
 
     @Test
@@ -33,9 +32,20 @@ public class ExampleUnitTest {
         String b = Utilities.dateFormatter("2016-05-12");
         String c = Utilities.dateFormatter("2016-05-13");
 
-        assertEquals("Releasing on the 14th", a);
-        assertEquals("Released on the 12th", b);
-        assertEquals("Releasing today!", c);
+        Assert.assertEquals("Releasing on the 14th", a);
+        Assert.assertEquals("Released on the 12th", b);
+        Assert.assertEquals("Releasing today!", c);
+
+    }
+
+    @Test
+    public void firstOfMonth(){
+        DateTime dt = DateTime.today(TimeZone.getDefault());
+        String end = dt.getEndOfMonth().format("MM-DD-YYYY");
+        Assert.assertEquals("05-31-2016", end);
+        String firstOfNext = dt.getEndOfMonth().plusDays(1).format("MM-DD-YYYY");
+        Assert.assertEquals("06-01-2016", firstOfNext);
+
 
     }
 }

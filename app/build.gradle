@@ -37,4 +37,5 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:23.3.0'
     compile files('libs/date4j.jar')
     compile 'com.github.halysongoncalves:pugnotification:1.8.1'
+    compile 'com.android.support:cardview-v7:23.0.+'
 }

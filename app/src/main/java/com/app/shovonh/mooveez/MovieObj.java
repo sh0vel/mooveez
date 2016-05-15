@@ -8,6 +8,7 @@ import java.util.Arrays;
 public class MovieObj extends Object {
     String title, description, releaseDate, rating, cover, backdrop;
     int [] genres;
+    int id;
 
     public MovieObj(String title, String description,String releaseDate, String rating, String cover, String backdrop){
         this.title = title;
@@ -18,7 +19,7 @@ public class MovieObj extends Object {
         this.backdrop = "http://image.tmdb.org/t/p/w500/" + backdrop;
     }
 
-    public MovieObj(String title, String description,String releaseDate,String cover, String backdrop, int [] genres){
+    public MovieObj(String title, String description,String releaseDate,String cover, String backdrop, int [] genres, int id){
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
@@ -26,6 +27,9 @@ public class MovieObj extends Object {
         this.backdrop = "http://image.tmdb.org/t/p/w500/" + backdrop;
         this.genres = new int [genres.length];
         this.genres = Arrays.copyOf(genres, genres.length);
+        this.id = id;
     }
+
+
 
 }

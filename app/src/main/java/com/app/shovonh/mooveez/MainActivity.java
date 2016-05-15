@@ -1,6 +1,7 @@
 package com.app.shovonh.mooveez;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Month of May");
+        toolbar.setTitleTextColor(Color.WHITE);
 
         dbHelper = new MovieDBHelper(getBaseContext());
 
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

@@ -79,7 +79,7 @@ public class ThisMonthFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MovieObj m = thisMonthsMovieList.get(i);
-                String[] movieDetails = {m.cover, m.title, m.releaseDate, m.description, m.backdrop, Utilities.genresToString(m.genres)};
+                String[] movieDetails = {m.cover, m.title, m.releaseDate, m.description, m.backdrop, Utilities.genresToString(m.genres), String.valueOf(m.id)};
                 ((Callback) getActivity()).onItemSelected(MOVIE_DETAILS_BUNDLE_ID, movieDetails);
             }
         });
@@ -102,7 +102,7 @@ public class ThisMonthFragment extends Fragment {
             final String TMD_DESCRIPTION = "overview";
             final String TMD_RELEASE = "release_date";
             final String TMD_TITLE = "title";
-            final String TMD_RATING = "vote_average";
+            final String TMD_ID= "id";
             final String TMD_BACKDROP = "backdrop_path";
             final String TMD_GENRE_ARRAY = "genre_ids";
 
@@ -113,6 +113,7 @@ public class ThisMonthFragment extends Fragment {
             for (int i = 0; i < _moviesArray.length(); i++) {
                 String title, description, release, cover, backdrop;
                 int[] genres;
+                int id ;
 
 
                 JSONObject _movieObject = _moviesArray.getJSONObject(i);
@@ -122,6 +123,7 @@ public class ThisMonthFragment extends Fragment {
                     title = _movieObject.getString(TMD_TITLE);
                     description = _movieObject.getString(TMD_DESCRIPTION);
                     release = _movieObject.getString(TMD_RELEASE);
+                    id = _movieObject.getInt(TMD_ID);
                     JSONArray genreArray = _movieObject.getJSONArray(TMD_GENRE_ARRAY);
                     int s = genreArray.length();
                     genres = new int[s];
@@ -130,7 +132,7 @@ public class ThisMonthFragment extends Fragment {
                     }
 
 
-                    MovieObj movie = new MovieObj(title, description, release, cover, backdrop, genres);
+                    MovieObj movie = new MovieObj(title, description, release, cover, backdrop, genres, id);
                     _movies.add(movie);
                 }
 
@@ -140,7 +142,6 @@ public class ThisMonthFragment extends Fragment {
             for (int i = 0; i < _movies.size(); i++){
                 array[i] = _movies.get(i);
             }
-            Log.v(LOG_TAG, "Array size: " + array.length);
 
             return array;
         }

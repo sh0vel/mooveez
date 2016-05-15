@@ -30,7 +30,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.app.shovonh.mooveez.MainActivity" />
         </activity>
-        <receiver android:name=".Notification" >
+        <receiver android:name=".Notifications" >
             <intent-filter>
                 <action android:name="NOTIFICATION_SERVICE" />
             </intent-filter>
