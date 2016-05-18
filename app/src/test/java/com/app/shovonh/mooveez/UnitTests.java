@@ -45,7 +45,8 @@ public class UnitTests {
         Assert.assertEquals("05-31-2016", end);
         String firstOfNext = dt.getEndOfMonth().plusDays(1).format("MM-DD-YYYY");
         Assert.assertEquals("06-01-2016", firstOfNext);
-
+        DateTime dt2 = new DateTime("2016-05-18 06:00:00");
+        Assert.assertEquals(1463565600000L, dt2.getMilliseconds(TimeZone.getDefault()));
 
     }
 }

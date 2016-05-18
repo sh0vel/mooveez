@@ -6,11 +6,12 @@ import java.util.Arrays;
  * Created by Shovon on 4/26/16.
  */
 public class MovieObj extends Object {
-    String title, description, releaseDate, rating, cover, backdrop;
-    int [] genres;
-    int id;
+   private String title, description, releaseDate, rating, cover, backdrop;
+   private int [] genres;
+    private int id;
 
-    public MovieObj(String title, String description,String releaseDate, String rating, String cover, String backdrop){
+
+    public MovieObj(String title, String description, String releaseDate, String rating, String cover, String backdrop){
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
@@ -30,6 +31,41 @@ public class MovieObj extends Object {
         this.id = id;
     }
 
+    public MovieObj(String title, String release, int id){
+        this.title = title;
+        this.releaseDate = release;
+        this.id = id;
+    }
 
+    public String getTitle(){
+        return title;
+    }
 
+    public String getDescription(){
+        return description;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public String getBackdrop() {
+        return backdrop;
+    }
+
+    public int[] getGenres() {
+        return genres;
+    }
+
+    public int getId(){
+        return id;
+    }
 }

@@ -8,12 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.app.shovonh.mooveez.data.MovieDBHelper;
+import com.app.shovonh.mooveez.data.AlarmDBHelper;
 
 public class MainActivity extends AppCompatActivity implements ThisMonthFragment.Callback {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    public static MovieDBHelper dbHelper;
+    public static AlarmDBHelper dbHelper;
 
 
     @Override
@@ -24,9 +24,26 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
 
-        dbHelper = new MovieDBHelper(getBaseContext());
 
-
+//        boolean monthlyAlarmSet = (PendingIntent.getBroadcast(this, 0, new Intent(this, MonthlyNotifications.class), PendingIntent.FLAG_NO_CREATE) != null);
+//
+//
+//        if (monthlyAlarmSet)
+//            Log.v(LOG_TAG, "Alarm set already");
+//        else {
+//            Log.v(LOG_TAG, "Alarm not set, creating now");
+//            Intent intent = new Intent(this, MonthlyNotifications.class);
+//            PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
+//
+//            String firstOfNext = DateTime.now(TimeZone.getDefault()).getEndOfMonth().plusDays(1).format("MM-DD-YYYY");
+//            DateTime dt = new DateTime(firstOfNext + "06:00:00");
+//
+//            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//            am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+7000, pi);
+//
+//
+//
+//        }
 
     }
 

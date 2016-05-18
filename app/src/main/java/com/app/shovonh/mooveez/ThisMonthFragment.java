@@ -69,6 +69,7 @@ public class ThisMonthFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_this_month, container, false);
 
+
         thisMonthsMovieList = new ArrayList<>();
 
         adapter = new ImageAdapter(getActivity(), thisMonthsMovieList);
@@ -79,7 +80,9 @@ public class ThisMonthFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MovieObj m = thisMonthsMovieList.get(i);
-                String[] movieDetails = {m.cover, m.title, m.releaseDate, m.description, m.backdrop, Utilities.genresToString(m.genres), String.valueOf(m.id)};
+                String[] movieDetails = {m.getCover(), m.getTitle(),
+                        m.getReleaseDate(), m.getDescription(), m.getBackdrop(),
+                        Utilities.genresToString(m.getGenres()), String.valueOf(m.getId())};
                 ((Callback) getActivity()).onItemSelected(MOVIE_DETAILS_BUNDLE_ID, movieDetails);
             }
         });

@@ -14,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -38,7 +37,7 @@ public class MovieDetailsFrag extends Fragment {
     private static final String MOVIE_DETAILS_ARRAY = "param1";
 
     // TODO: Rename and change types of parameters
-    //array 0:poster 1:title 2:release 3:rating 4:description 5:trailer1 6:trailer2
+    //array 0:poster 1:title 2:release 3:rating 4:description
     private String movieDetails[];
 
 
@@ -106,38 +105,20 @@ public class MovieDetailsFrag extends Fragment {
         tvGenres.setText(movieDetails[5]);
 
         trailers = new ArrayList<>();
-        arrayAdapter = new ArrayAdapter(getActivity(), R.layout.trailers_list_item, R.id.trailer_list_item_text, trailers);
 
-        ListView listView = (ListView) view.findViewById(R.id.trailers_list);
+
         //listView.setAdapter(arrayAdapter);
 
         linearList = (LinearLayout) view.findViewById(R.id.add_list_items_here);
         layoutInflater = inflater;
         context = getContext();
-//        Log.v(LOG_TAG, "Adding trailers from list");
-//        for (int i = 0; i < trailers.size(); i++) {
-//            View v = inflater.inflate(R.layout.trailers_list_item, null);
-//            TextView tv = (TextView) v.findViewById(R.id.trailer_list_item_text);
-//            Trailer t = trailers.get(i);
-//            Log.v(LOG_TAG, "Trailer name:" + t .name + "Trailer link: " + t.link) ;
-//            tv.setText(t.name);
-//            linearList.addView(v, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        }
-
-
-
-
 
 
         return view;
     }
 
-    public void m(){
-
-    }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -161,16 +142,6 @@ public class MovieDetailsFrag extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -201,13 +172,8 @@ public class MovieDetailsFrag extends Fragment {
                 link = trailerJsonObject.getString(TMD_LINK);
 
                 trailers [i] = new Trailer(name, link);
-                Log.v(LOG_TAG, "Name: " + name + "Link: " + link);
 
                 }
-
-            Log.v(LOG_TAG, "Array size: " + trailers.length);
-
-
             return trailers;
         }
 
@@ -289,8 +255,6 @@ public class MovieDetailsFrag extends Fragment {
             for (Trailer t : trailerArray) {
                 trailers.add(t);
             }
-            Log.v(LOG_TAG, "Adding trailers from list");
-
             for (int i = 0; i < trailers.size(); i++) {
                 View v = layoutInflater.inflate(R.layout.trailers_list_item, null);
                 //TextView tv = (TextView) v.findViewById(R.id.trailer_list_item_text);
@@ -306,18 +270,9 @@ public class MovieDetailsFrag extends Fragment {
                         context.startActivity(browserIntent);
                     }
                 });
-//                v.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-//                        context.startActivity(browserIntent);
 //
-//                    }
-//                });
                 linearList.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
-
-            Log.v(LOG_TAG, "Done adding trailers to list");
         }
     }
 }

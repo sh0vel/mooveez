@@ -122,10 +122,5 @@
 
             </LinearLayout>
         </ScrollView>
-
-        <ListView
-            android:id="@+id/trailers_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></ListView>
     </LinearLayout>
 </RelativeLayout>
