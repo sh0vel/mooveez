@@ -49,4 +49,10 @@ public class UnitTests {
         Assert.assertEquals(1463565600000L, dt2.getMilliseconds(TimeZone.getDefault()));
 
     }
+
+    @Test
+    public void substrings(){
+        String s = "2016-05-01T00:00:00";
+        Assert.assertEquals("2016-05-01", s.substring(0, 10));
+    }
 }

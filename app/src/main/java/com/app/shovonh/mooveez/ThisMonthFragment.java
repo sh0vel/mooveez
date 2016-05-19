@@ -80,6 +80,7 @@ public class ThisMonthFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MovieObj m = thisMonthsMovieList.get(i);
+
                 String[] movieDetails = {m.getCover(), m.getTitle(),
                         m.getReleaseDate(), m.getDescription(), m.getBackdrop(),
                         Utilities.genresToString(m.getGenres()), String.valueOf(m.getId())};
@@ -108,13 +109,14 @@ public class ThisMonthFragment extends Fragment {
             final String TMD_ID= "id";
             final String TMD_BACKDROP = "backdrop_path";
             final String TMD_GENRE_ARRAY = "genre_ids";
+            final String TMD_ORIGINAL_LANGUAGE = "original_language";
 
             JSONObject _moviesJson = new JSONObject(_movieJsonStr);
             JSONArray _moviesArray = _moviesJson.getJSONArray(TMD_RESULTS);
 
             ArrayList<MovieObj> _movies = new ArrayList<>();
             for (int i = 0; i < _moviesArray.length(); i++) {
-                String title, description, release, cover, backdrop;
+                String title, description, release, cover, backdrop, lang;
                 int[] genres;
                 int id ;
 
@@ -122,7 +124,11 @@ public class ThisMonthFragment extends Fragment {
                 JSONObject _movieObject = _moviesArray.getJSONObject(i);
                 cover = _movieObject.getString(TMD_POSTER);
                 backdrop = _movieObject.getString(TMD_BACKDROP);
-                if (!cover.equals("null") && !backdrop.equals("null")) {
+                lang = _movieObject.getString(TMD_ORIGINAL_LANGUAGE);
+                if (!cover.equals("null") && !backdrop.equals("null") && lang.equals("en")) {
+                   // URL url = new URL()
+
+
                     title = _movieObject.getString(TMD_TITLE);
                     description = _movieObject.getString(TMD_DESCRIPTION);
                     release = _movieObject.getString(TMD_RELEASE);
@@ -134,12 +140,12 @@ public class ThisMonthFragment extends Fragment {
                         genres[j] = genreArray.getInt(j);
                     }
 
-
                     MovieObj movie = new MovieObj(title, description, release, cover, backdrop, genres, id);
                     _movies.add(movie);
                 }
 
             }
+
 
             MovieObj [] array = new MovieObj[_movies.size()];
             for (int i = 0; i < _movies.size(); i++){
@@ -247,6 +253,9 @@ public class ThisMonthFragment extends Fragment {
             }
         }
     }
+
+
+
 
 
 }

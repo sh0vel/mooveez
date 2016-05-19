@@ -88,7 +88,13 @@ public class AlarmDBHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(MovieEntry.TABLE_NAME, MovieEntry.COLUMN_MOVIE_ID + " = ?",new String[]{String.valueOf(id)});
         db.close();
-        Log.v(LOG_TAG, "Deleted");
+        Log.v(LOG_TAG, "Deleted " + id);
+        ArrayList<MovieObj> objs = getAllMovies();
+//        for (MovieObj m : objs){
+//
+//            Log.v(LOG_TAG, m.getTitle() + ", " + m.getReleaseDate() + ", " + m.getId());
+//            //dbHelper.deleteEntry(m.id);
+//        }
     }
 
 

@@ -38,10 +38,8 @@ public class MovieDetailsFrag extends Fragment {
 
     // TODO: Rename and change types of parameters
     //array 0:poster 1:title 2:release 3:rating 4:description
-    private String movieDetails[];
+    public static String movieDetails[];
 
-
-    private OnFragmentInteractionListener mListener;
 
     private static ImageView imgPoster, imgBackdrop;
     private static TextView tvTitle, tvRelease, tvRating, tvDescription, tvTrailer1, tvTrailer2, tvGenres;
@@ -92,6 +90,7 @@ public class MovieDetailsFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view = inflater.inflate(com.app.shovonh.mooveez.R.layout.fragment_movie_details, container, false);
         initializeView(view);
         if (!movieDetails[4].equals("http://image.tmdb.org/t/p/w500/null"))
@@ -119,35 +118,111 @@ public class MovieDetailsFrag extends Fragment {
 
 
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+
+
+
+    public static class FetchUSDate extends AsyncTask<String, Void, String> {
+        public static final String LOG_TAG = FetchUSDate.class.getSimpleName();
+
+
+        private String getReleaseDateFromJson(String jsonString, String defaultDate) throws JSONException {
+
+            final String TMD_RESULTS = "results";
+            final String TMD_COUNTRY = "iso_3166_1";
+            final String TMD_RELEASE_ARRAY = "release_dates";
+            final String TMD_RELEASE_DATE = "release_date";
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray(TMD_RESULTS);
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject releaseObject = jsonArray.getJSONObject(i);
+                if (releaseObject.getString(TMD_COUNTRY).equals("US")){
+                    JSONArray releaseArray = releaseObject.getJSONArray(TMD_RELEASE_ARRAY);
+                    JSONObject release = releaseArray.getJSONObject(0);
+                    return release.getString(TMD_RELEASE_DATE).substring(0, 10);
+                }
+
+            }
+            return defaultDate;
+        }
+
+        @Override
+        protected String doInBackground(String... s) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String _resultsJsonStr = null;
+            String format = "json";
+
+            try {
+                final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie/" + s[0] + "/release_dates?";
+                final String API_KEY = "api_key";
+
+                Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                        .appendQueryParameter(API_KEY, BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+                Log.v(LOG_TAG, "Built URI :" + builtUri.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    _resultsJsonStr = null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append((line + "\n"));
+                }
+
+                if (buffer.length() == 0) {
+                    _resultsJsonStr = null;
+                }
+
+                _resultsJsonStr = buffer.toString();
+
+                // Log.v(LOG_TAG, "Result JSON STR: " + _resultsJsonStr);
+
+            } catch (IOException e) {
+                Log.e("MovieFragment", "Error ", e);
+                _resultsJsonStr = null;
+            } finally {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("MoviesFragment", "Error closingstream", e);
+                    }
+                }
+            }
+
+
+            try {
+                return getReleaseDateFromJson(_resultsJsonStr, s[1]);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Log.v(LOG_TAG, s);
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-    public static class FetchTrailers extends AsyncTask<String, Void, Trailer[]> {
+        public static class FetchTrailers extends AsyncTask<String, Void, Trailer[]> {
         private final String LOG_TAG = FetchTrailers.class.getSimpleName();
 
 
@@ -252,6 +327,9 @@ public class MovieDetailsFrag extends Fragment {
         protected void onPostExecute(Trailer[] trailerArray) {
 
             super.onPostExecute(trailerArray);
+            FetchUSDate fetchUSDate = new FetchUSDate();
+            fetchUSDate.execute(movieDetails[6], movieDetails[2]);
+
             for (Trailer t : trailerArray) {
                 trailers.add(t);
             }
@@ -270,7 +348,7 @@ public class MovieDetailsFrag extends Fragment {
                         context.startActivity(browserIntent);
                     }
                 });
-//
+
                 linearList.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         }

@@ -115,11 +115,12 @@ public class TestDB extends AndroidTestCase {
 
     public void testInsert(){
         AlarmDBHelper dbHelper = new AlarmDBHelper(mContext);
-
-        dbHelper.insertData("X-Men", "tomorrow", 3);
-        dbHelper.insertData("Avengers", "LastMonth", 4);
+//
+//        dbHelper.insertData("X-Men", "tomorrow", 3);
+//        dbHelper.insertData("Avengers", "LastMonth", 4);
         ArrayList<MovieObj> objs = dbHelper.getAllMovies();
         for (MovieObj m : objs){
+           Log.d(LOG_TAG, m.getTitle());
         }
 
     }
