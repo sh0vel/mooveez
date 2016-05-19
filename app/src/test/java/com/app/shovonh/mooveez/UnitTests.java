@@ -54,5 +54,6 @@ public class UnitTests {
     public void substrings(){
         String s = "2016-05-01T00:00:00";
         Assert.assertEquals("2016-05-01", s.substring(0, 10));
+        Assert.assertEquals("05", s.substring(5, 7));
     }
 }

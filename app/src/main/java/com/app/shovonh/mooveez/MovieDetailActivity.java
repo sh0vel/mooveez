@@ -23,6 +23,7 @@ import hirondelle.date4j.DateTime;
 public class MovieDetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = MovieDetailActivity.class.getSimpleName();
     public static String[] bundle;
+    public static FloatingActionButton fab;
 
 
     @Override
@@ -37,12 +38,12 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         bundle = getIntent().getStringArrayExtra(ThisMonthFragment.MOVIE_DETAILS_BUNDLE_ID);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
 
         if (Utilities.alreadyReleased(bundle[2])) {
             fab.setVisibility(View.INVISIBLE);
         } else fab.setVisibility(View.VISIBLE);
-
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +68,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     Log.v(LOG_TAG, m.getTitle() + ", " + m.getReleaseDate() + ", " + m.getId());
                     //dbHelper.deleteEntry(m.id);
                 }
+
 
             }
         });

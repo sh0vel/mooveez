@@ -114,4 +114,12 @@ public class Utilities {
         listView.setLayoutParams(params);
     }
 
+    public static boolean isThisMonth(String date){
+        DateTime dt = DateTime.now(TimeZone.getDefault());
+        //Log.v("TestUnit", "Current month is " + dt.toString().substring(5, 7) + " release month is " + date.substring(5,7));
+        return ((dt.toString().substring(5, 7)).equals(date.substring(5,7)));
+       // String tempMonth = "06";
+     //   return tempMonth.equals(date.substring(5,7));
+    }
+
 }

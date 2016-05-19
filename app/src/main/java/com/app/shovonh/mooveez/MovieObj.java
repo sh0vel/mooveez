@@ -68,4 +68,8 @@ public class MovieObj extends Object {
     public int getId(){
         return id;
     }
+
+    public void setReleaseDate(String newDate){
+        this.releaseDate = newDate;
+    }
 }

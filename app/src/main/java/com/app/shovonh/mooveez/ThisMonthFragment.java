@@ -35,6 +35,7 @@ public class ThisMonthFragment extends Fragment {
     private static final String LOG_TAG = ThisMonthFragment.class.getSimpleName();
 
     public static ImageAdapter adapter;
+    public static ArrayList<MovieObj> tempList;
     public static ArrayList<MovieObj> thisMonthsMovieList;
     public static String MOVIE_DETAILS_BUNDLE_ID = "movedetails";
 
@@ -125,7 +126,7 @@ public class ThisMonthFragment extends Fragment {
                 cover = _movieObject.getString(TMD_POSTER);
                 backdrop = _movieObject.getString(TMD_BACKDROP);
                 lang = _movieObject.getString(TMD_ORIGINAL_LANGUAGE);
-                if (!cover.equals("null") && !backdrop.equals("null") && lang.equals("en")) {
+                if (!cover.equals("null") && !backdrop.equals("null")) {
                    // URL url = new URL()
 
 
@@ -182,6 +183,10 @@ public class ThisMonthFragment extends Fragment {
                 final String PAGE = "page";
                 final String RELEASE_DATE_GTE = "primary_release_date.gte";
                 final String RELEASE_DATE_LTE = "primary_release_date.lte";
+                final String CERTIFICATION_COUNTRY = "certification_country";
+                final String CERTIFICATION_LTE = "certification.lte";
+                final String INCLUDE_ADULT = "include_adult";
+                final String VOTE_COUNT = "vote_count.gte";
                 final String SORT_BY = "sort_by";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
@@ -189,7 +194,10 @@ public class ThisMonthFragment extends Fragment {
                         .appendQueryParameter(PAGE, "1")
                         .appendQueryParameter(RELEASE_DATE_GTE, formatedDate(0))
                         .appendQueryParameter(RELEASE_DATE_LTE, formatedDate(1))
+                        .appendQueryParameter(CERTIFICATION_COUNTRY, "US")
+                        .appendQueryParameter(CERTIFICATION_LTE, "NC-17")
                         .appendQueryParameter(SORT_BY, "popularity.desc")
+                        //.appendQueryParameter(VOTE_COUNT, "1")
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -247,15 +255,127 @@ public class ThisMonthFragment extends Fragment {
         @Override
         protected void onPostExecute(MovieObj[] movieObjs) {
             super.onPostExecute(movieObjs);
+            tempList = new ArrayList<>();
             for (MovieObj m : movieObjs) {
-                thisMonthsMovieList.add(m);
-                adapter.setData(thisMonthsMovieList);
+                tempList.add(m);
+                //adapter.setData(thisMonthsMovieList);
+            }
+
+            Log.v(LOG_TAG, " tempList size: " + tempList.size());
+
+            for (int i = 0; i < tempList.size(); i++) {
+                FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
+                fetchUUSDate.execute(tempList.get(i));
             }
         }
     }
 
 
 
+    public static class FetchMovieAtributes extends AsyncTask<MovieObj, Void, MovieObj> {
+        public static final String LOG_TAG = FetchMovieAtributes.class.getSimpleName();
 
+
+        private MovieObj getReleaseDateFromJson(String jsonString, MovieObj movieObj) throws JSONException {
+
+            final String TMD_RESULTS = "results";
+            final String TMD_COUNTRY = "iso_3166_1";
+            final String TMD_RELEASE_ARRAY = "release_dates";
+            final String TMD_RELEASE_DATE = "release_date";
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray(TMD_RESULTS);
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject releaseObject = jsonArray.getJSONObject(i);
+                if (releaseObject.getString(TMD_COUNTRY).equals("US")){
+                    JSONArray releaseArray = releaseObject.getJSONArray(TMD_RELEASE_ARRAY);
+                    JSONObject release = releaseArray.getJSONObject(releaseArray.length() - 1);
+                    String newDate = release.getString(TMD_RELEASE_DATE).substring(0, 10);
+
+                        movieObj.setReleaseDate(newDate);
+                        return movieObj;
+                    }
+                }
+            return movieObj;
+        }
+
+        @Override
+        protected MovieObj doInBackground(MovieObj... m) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String _resultsJsonStr = null;
+            String format = "json";
+
+            try {
+                final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie/" + m[0].getId() + "/release_dates?";
+                final String API_KEY = "api_key";
+
+                Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                        .appendQueryParameter(API_KEY, BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    _resultsJsonStr = null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append((line + "\n"));
+                }
+
+                if (buffer.length() == 0) {
+                    _resultsJsonStr = null;
+                }
+
+                _resultsJsonStr = buffer.toString();
+
+                // Log.v(LOG_TAG, "Result JSON STR: " + _resultsJsonStr);
+
+            } catch (IOException e) {
+                Log.e("MovieFragment", "Error ", e);
+                _resultsJsonStr = null;
+            } finally {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("MoviesFragment", "Error closingstream", e);
+                    }
+                }
+            }
+
+
+            try {
+                return getReleaseDateFromJson(_resultsJsonStr, m[0]);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(MovieObj movieObj) {
+            super.onPostExecute(movieObj);
+            //Log.v(LOG_TAG, "Movie name is " + movieObj.getTitle());
+            if (Utilities.isThisMonth(movieObj.getReleaseDate())) {
+                Log.v(LOG_TAG, "Added " + movieObj.getTitle() + " with release date " + movieObj.getReleaseDate());
+                thisMonthsMovieList.add(movieObj);
+                adapter.setData(thisMonthsMovieList);
+            }
+        }
+    }
 
 }

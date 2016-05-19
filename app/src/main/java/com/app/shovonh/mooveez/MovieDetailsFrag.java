@@ -138,7 +138,7 @@ public class MovieDetailsFrag extends Fragment {
                 JSONObject releaseObject = jsonArray.getJSONObject(i);
                 if (releaseObject.getString(TMD_COUNTRY).equals("US")){
                     JSONArray releaseArray = releaseObject.getJSONArray(TMD_RELEASE_ARRAY);
-                    JSONObject release = releaseArray.getJSONObject(0);
+                    JSONObject release = releaseArray.getJSONObject(releaseArray.length() - 1);
                     return release.getString(TMD_RELEASE_DATE).substring(0, 10);
                 }
 
@@ -217,7 +217,12 @@ public class MovieDetailsFrag extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.v(LOG_TAG, s);
+            tvRelease.setText(Utilities.dateFormatter(s));
+            MovieDetailActivity.bundle[2] = s;
+            if (Utilities.alreadyReleased(s)) {
+                MovieDetailActivity.fab.setVisibility(View.INVISIBLE);
+            } else MovieDetailActivity.fab.setVisibility(View.VISIBLE);
+
         }
     }
 
@@ -328,7 +333,7 @@ public class MovieDetailsFrag extends Fragment {
 
             super.onPostExecute(trailerArray);
             FetchUSDate fetchUSDate = new FetchUSDate();
-            fetchUSDate.execute(movieDetails[6], movieDetails[2]);
+            //fetchUSDate.execute(movieDetails[6], movieDetails[2]);
 
             for (Trailer t : trailerArray) {
                 trailers.add(t);
