@@ -8,7 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.data.AlarmDBHelper;
+
+import org.parceler.Parcels;
 
 public class MainActivity extends AppCompatActivity implements ThisMonthFragment.Callback {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -71,9 +74,9 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
 
 
     @Override
-    public void onItemSelected(String id, String[] movieDetails) {
+    public void onItemSelected(String id, MovieObj movieObj) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(id, movieDetails);
+        intent.putExtra(id, Parcels.wrap(movieObj));
         startActivity(intent);
     }
 }

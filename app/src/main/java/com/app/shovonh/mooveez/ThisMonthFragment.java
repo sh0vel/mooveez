@@ -13,6 +13,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.app.shovonh.mooveez.Objs.Cast;
+import com.app.shovonh.mooveez.Objs.MovieObj;
+import com.app.shovonh.mooveez.Objs.Trailer;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +41,7 @@ public class ThisMonthFragment extends Fragment {
     public static ImageAdapter adapter;
     public static ArrayList<MovieObj> tempList;
     public static ArrayList<MovieObj> thisMonthsMovieList;
-    public static String MOVIE_DETAILS_BUNDLE_ID = "movedetails";
+    public static String SELECTED_MOVIE_BUNDLE_ID = "movie";
 
     public ThisMonthFragment() {
         // Required empty public constructor
@@ -52,7 +56,7 @@ public class ThisMonthFragment extends Fragment {
     }
 
     public interface Callback {
-        public void onItemSelected(String id, String[] movieDetails);
+        public void onItemSelected(String id, MovieObj movieObj);
     }
 
 
@@ -82,10 +86,7 @@ public class ThisMonthFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MovieObj m = thisMonthsMovieList.get(i);
 
-                String[] movieDetails = {m.getCover(), m.getTitle(),
-                        m.getReleaseDate(), m.getDescription(), m.getBackdrop(),
-                        Utilities.genresToString(m.getGenres()), String.valueOf(m.getId())};
-                ((Callback) getActivity()).onItemSelected(MOVIE_DETAILS_BUNDLE_ID, movieDetails);
+                ((Callback) getActivity()).onItemSelected(SELECTED_MOVIE_BUNDLE_ID, thisMonthsMovieList.get(i));
             }
         });
 
@@ -107,7 +108,7 @@ public class ThisMonthFragment extends Fragment {
             final String TMD_DESCRIPTION = "overview";
             final String TMD_RELEASE = "release_date";
             final String TMD_TITLE = "title";
-            final String TMD_ID= "id";
+            final String TMD_ID = "id";
             final String TMD_BACKDROP = "backdrop_path";
             final String TMD_GENRE_ARRAY = "genre_ids";
             final String TMD_ORIGINAL_LANGUAGE = "original_language";
@@ -119,7 +120,7 @@ public class ThisMonthFragment extends Fragment {
             for (int i = 0; i < _moviesArray.length(); i++) {
                 String title, description, release, cover, backdrop, lang;
                 int[] genres;
-                int id ;
+                int id;
 
 
                 JSONObject _movieObject = _moviesArray.getJSONObject(i);
@@ -127,7 +128,7 @@ public class ThisMonthFragment extends Fragment {
                 backdrop = _movieObject.getString(TMD_BACKDROP);
                 lang = _movieObject.getString(TMD_ORIGINAL_LANGUAGE);
                 if (!cover.equals("null") && !backdrop.equals("null")) {
-                   // URL url = new URL()
+                    // URL url = new URL()
 
 
                     title = _movieObject.getString(TMD_TITLE);
@@ -148,8 +149,8 @@ public class ThisMonthFragment extends Fragment {
             }
 
 
-            MovieObj [] array = new MovieObj[_movies.size()];
-            for (int i = 0; i < _movies.size(); i++){
+            MovieObj[] array = new MovieObj[_movies.size()];
+            for (int i = 0; i < _movies.size(); i++) {
                 array[i] = _movies.get(i);
             }
 
@@ -271,31 +272,76 @@ public class ThisMonthFragment extends Fragment {
     }
 
 
-
     public static class FetchMovieAtributes extends AsyncTask<MovieObj, Void, MovieObj> {
         public static final String LOG_TAG = FetchMovieAtributes.class.getSimpleName();
 
 
-        private MovieObj getReleaseDateFromJson(String jsonString, MovieObj movieObj) throws JSONException {
+        private MovieObj getAttributesFromJson(String jsonString, MovieObj movieObj) throws JSONException {
 
-            final String TMD_RESULTS = "results";
-            final String TMD_COUNTRY = "iso_3166_1";
-            final String TMD_RELEASE_ARRAY = "release_dates";
-            final String TMD_RELEASE_DATE = "release_date";
+            final String RELEASE_OBJECT = "release_dates";
+            final String RELEASE_RESULTS = "results";
+            final String RELEASE_COUNTRY = "iso_3166_1";
+            final String RELEASE_ARRAY = "release_dates";
+            final String RELEASE_DATE = "release_date";
+
+            final String TRAILER_OBJECT = "videos";
+            final String TRAILER_RESULTS = "results";
+            final String TRAILER_NAME = "name";
+            final String TRAILER_LINK = "key";
+
+            final String CAST_OBJECT = "credits";
+            final String CAST_RESULTS = "cast";
+            final String CAST_ID = "id";
+            final String CAST_NAME = "name";
+            final String CAST_CHARACTER = "character";
+            final String CAST_IMG = "profile_path";
 
             JSONObject jsonObject = new JSONObject(jsonString);
-            JSONArray jsonArray = jsonObject.getJSONArray(TMD_RESULTS);
-            for (int i = 0; i < jsonArray.length(); i++){
-                JSONObject releaseObject = jsonArray.getJSONObject(i);
-                if (releaseObject.getString(TMD_COUNTRY).equals("US")){
-                    JSONArray releaseArray = releaseObject.getJSONArray(TMD_RELEASE_ARRAY);
-                    JSONObject release = releaseArray.getJSONObject(releaseArray.length() - 1);
-                    String newDate = release.getString(TMD_RELEASE_DATE).substring(0, 10);
 
-                        movieObj.setReleaseDate(newDate);
-                        return movieObj;
-                    }
+            JSONObject releaseJsonObject = jsonObject.getJSONObject(RELEASE_OBJECT);
+            JSONArray releaseJsonArray = releaseJsonObject.getJSONArray(RELEASE_RESULTS);
+            for (int i = 0; i < releaseJsonArray.length(); i++) {
+                JSONObject releaseObject = releaseJsonArray.getJSONObject(i);
+                if (releaseObject.getString(RELEASE_COUNTRY).equals("US")) {
+                    JSONArray releaseArray = releaseObject.getJSONArray(RELEASE_ARRAY);
+                    JSONObject release = releaseArray.getJSONObject(releaseArray.length() - 1);
+                    String newDate = release.getString(RELEASE_DATE).substring(0, 10);
+                    movieObj.setReleaseDate(newDate);
+                    break;
                 }
+            }
+
+            JSONObject trailersJsonObject = jsonObject.getJSONObject(TRAILER_OBJECT);
+            JSONArray trailersJsonArray = trailersJsonObject.getJSONArray(TRAILER_RESULTS);
+            Trailer [] trailers = new Trailer[trailersJsonArray.length()];
+            for (int i = 0; i < trailers.length; i++){
+                String name, link;
+                JSONObject trailerJsonObject = trailersJsonArray.getJSONObject(i);
+                name = trailerJsonObject.getString(TRAILER_NAME);
+                link = trailerJsonObject.getString(TRAILER_LINK);
+                trailers [i] = new Trailer(name, link);
+            }
+            movieObj.setTrailers(trailers);
+
+            JSONObject creditsJsonObject = jsonObject.getJSONObject(CAST_OBJECT);
+            JSONArray castJsonArray = creditsJsonObject.getJSONArray(CAST_RESULTS);
+            Cast [] castMems = new Cast[castJsonArray.length()];
+            for(int i = 0; i < castMems.length; i++){
+                int id;
+                String name, character, img;
+                JSONObject castMemberObject = castJsonArray.getJSONObject(i);
+                id = castMemberObject.getInt(CAST_ID);
+                name = castMemberObject.getString(CAST_NAME);
+                character = castMemberObject.getString(CAST_CHARACTER);
+                img = castMemberObject.getString(CAST_IMG);
+                Cast newcast = new Cast(id, name, character, img);
+                castMems[i] = newcast;
+            }
+            movieObj.setCastMembers(castMems);
+
+
+
+
             return movieObj;
         }
 
@@ -308,11 +354,13 @@ public class ThisMonthFragment extends Fragment {
             String format = "json";
 
             try {
-                final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie/" + m[0].getId() + "/release_dates?";
+                final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie/" + m[0].getId() + "?";
                 final String API_KEY = "api_key";
+                final String APPEND = "append_to_response";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendQueryParameter(API_KEY, BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .appendQueryParameter(APPEND, "release_dates,videos,credits")
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -358,7 +406,7 @@ public class ThisMonthFragment extends Fragment {
 
 
             try {
-                return getReleaseDateFromJson(_resultsJsonStr, m[0]);
+                return getAttributesFromJson(_resultsJsonStr, m[0]);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();

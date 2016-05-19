@@ -12,8 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.Receivers.ReleaseNotifications;
 import com.app.shovonh.mooveez.data.AlarmDBHelper;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.TimeZone;
@@ -22,8 +25,7 @@ import hirondelle.date4j.DateTime;
 
 public class MovieDetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = MovieDetailActivity.class.getSimpleName();
-    public static String[] bundle;
-    public static FloatingActionButton fab;
+    private MovieObj movie;
 
 
     @Override
@@ -36,12 +38,12 @@ public class MovieDetailActivity extends AppCompatActivity {
 //        setSupportActionBar(toolbar);
 //        getSupportActionBar().setTitle("");
 
-        bundle = getIntent().getStringArrayExtra(ThisMonthFragment.MOVIE_DETAILS_BUNDLE_ID);
+        movie = (MovieObj) Parcels.unwrap(getIntent().getParcelableExtra(ThisMonthFragment.SELECTED_MOVIE_BUNDLE_ID));
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
 
-        if (Utilities.alreadyReleased(bundle[2])) {
+        if (Utilities.alreadyReleased(movie.getReleaseDate())) {
             fab.setVisibility(View.INVISIBLE);
         } else fab.setVisibility(View.VISIBLE);
 
@@ -52,17 +54,17 @@ public class MovieDetailActivity extends AppCompatActivity {
                 sb.show();
 
                 Intent intent = new Intent(view.getContext(), ReleaseNotifications.class);
-                intent.putExtra(ReleaseNotifications.BUNDLE_ID_TITLE, bundle[1]);
-                intent.putExtra(ReleaseNotifications.BUNDLE_ID_ID, Integer.parseInt(bundle[6]));
-                PendingIntent pi = PendingIntent.getBroadcast(view.getContext(), Integer.parseInt(bundle[6]), intent, PendingIntent.FLAG_ONE_SHOT);
-                String release = bundle[2];
+                intent.putExtra(ReleaseNotifications.BUNDLE_ID_TITLE, movie.getTitle());
+                intent.putExtra(ReleaseNotifications.BUNDLE_ID_ID, movie.getId());
+                PendingIntent pi = PendingIntent.getBroadcast(view.getContext(), movie.getId(), intent, PendingIntent.FLAG_ONE_SHOT);
+                String release = movie.getReleaseDate();
                 DateTime dt = new DateTime(release + " 06:00:00");
 
                 //dt.getMilliseconds(TimeZone.getDefault())
                 AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, dt.getMilliseconds(TimeZone.getDefault()), pi);
 
-                dbHelper.insertData(bundle[1], bundle[2], Integer.parseInt(bundle[6]));
+                dbHelper.insertData(movie.getTitle(), movie.getReleaseDate(), movie.getId());
                 ArrayList<MovieObj> objs = dbHelper.getAllMovies();
                 for (MovieObj m : objs){
                     Log.v(LOG_TAG, m.getTitle() + ", " + m.getReleaseDate() + ", " + m.getId());
@@ -77,7 +79,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
 
             Fragment fragment =
-                    new MovieDetailsFrag().newInstance(bundle);
+                    new MovieDetailsFrag().newInstance(movie);
             getSupportFragmentManager().beginTransaction().add(R.id.movie_details_activity, fragment).commit();
 
         }

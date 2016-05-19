@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.app.shovonh.mooveez.MovieObj;
+import com.app.shovonh.mooveez.Objs.MovieObj;
 
 import java.util.ArrayList;
 import java.util.HashSet;

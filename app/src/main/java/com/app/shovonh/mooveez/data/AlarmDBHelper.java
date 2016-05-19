@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.app.shovonh.mooveez.MovieObj;
+import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.data.notificationContract.MovieEntry;
 
 import java.util.ArrayList;

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

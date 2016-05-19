@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.app.shovonh.mooveez.MovieObj;
+import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.data.AlarmDBHelper;
 
 import java.util.ArrayList;
