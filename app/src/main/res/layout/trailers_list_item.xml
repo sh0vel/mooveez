@@ -13,6 +13,7 @@
         android:text="Play Trailer 1"
         android:drawableLeft="@drawable/ic_action_play"
         android:gravity="center_vertical"
+        android:drawablePadding="@dimen/text_margin"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:textAllCaps="false"/>
 

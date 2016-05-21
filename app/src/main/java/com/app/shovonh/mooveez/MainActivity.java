@@ -1,12 +1,19 @@
 package com.app.shovonh.mooveez;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.data.AlarmDBHelper;
@@ -27,26 +34,23 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
 
+        FrameLayout card = (FrameLayout) findViewById(R.id.no_network_view);
 
-//        boolean monthlyAlarmSet = (PendingIntent.getBroadcast(this, 0, new Intent(this, MonthlyNotifications.class), PendingIntent.FLAG_NO_CREATE) != null);
-//
-//
-//        if (monthlyAlarmSet)
-//            Log.v(LOG_TAG, "Alarm set already");
-//        else {
-//            Log.v(LOG_TAG, "Alarm not set, creating now");
-//            Intent intent = new Intent(this, MonthlyNotifications.class);
-//            PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, 0);
-//
-//            String firstOfNext = DateTime.now(TimeZone.getDefault()).getEndOfMonth().plusDays(1).format("MM-DD-YYYY");
-//            DateTime dt = new DateTime(firstOfNext + "06:00:00");
-//
-//            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//            am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+7000, pi);
-//
-//
-//
-//        }
+        if (hasConnection(this)) {
+            card.setVisibility(View.GONE);
+            Fragment fragment = new ThisMonthFragment().newInstance();
+            getSupportFragmentManager().beginTransaction().add(R.id.container_grid, fragment).commit();
+        }else{
+            card.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = getIntent();
+                    finish();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                }
+            });
+        }
 
     }
 
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == com.app.shovonh.mooveez.R.id.action_settings) {
+        if (id == R.id.action_settings) {
             return true;
         }
 
@@ -78,5 +82,16 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
         Intent intent = new Intent(this, MovieDetailActivity.class);
         intent.putExtra(id, Parcels.wrap(movieObj));
         startActivity(intent);
+    }
+
+    public boolean hasConnection(Context context){
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo != null){
+            Log.v(LOG_TAG, ""+networkInfo.isConnected());
+            return  networkInfo.isConnected();
+        }
+        return false;
     }
 }

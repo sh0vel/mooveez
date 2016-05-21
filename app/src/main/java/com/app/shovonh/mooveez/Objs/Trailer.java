@@ -15,7 +15,8 @@ public class Trailer {
 
     public Trailer(String name, String link) {
         this.name = name;
-        this.link = "https://www.youtube.com/watch?v=" + link;
+        this.link = link;
+        // "https://www.youtube.com/watch?v=" +
     }
 
     public String getName() {

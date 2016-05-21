@@ -1,7 +1,6 @@
 package com.app.shovonh.mooveez;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -68,62 +67,39 @@ public class MovieDetailsFrag extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(com.app.shovonh.mooveez.R.layout.fragment_movie_details, container, false);
         initializeView(view);
-        Picasso.with(getContext()).load(movie.getBackdrop()).into(imgBackdrop);
 
+        Picasso.with(getContext()).load(movie.getBackdrop()).into(imgBackdrop);
 
         tvTitle.setText(movie.getTitle());
         tvRelease.setText(Utilities.dateFormatter(movie.getReleaseDate()));
         tvDescription.setText(movie.getDescription());
         tvGenres.setText(Utilities.genresToString(movie.getGenres()));
 
-        LinearLayout linearList = (LinearLayout) view.findViewById(R.id.add_list_items_here);
-        for(int i = 0; i < movie.getTrailers().length; i++){
-            View trailerView = inflater.inflate(R.layout.trailers_list_item, null);
-            Button b = (Button) trailerView.findViewById(R.id.trailer_list_item_text);
-            Trailer tr = movie.getTrailer(i);
-            final String link = tr.getLink();
-            b.setText(tr.getName());
-            b.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                    startActivity(intent);
-                }
-            });
-            linearList.addView(trailerView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (movie.getTrailers().length > 0) {
+            view.findViewById(R.id.no_trailers_text).setVisibility(View.GONE);
+            LinearLayout linearList = (LinearLayout) view.findViewById(R.id.add_list_items_here);
+            for (int i = 0; i < movie.getTrailers().length; i++) {
+                View trailerView = inflater.inflate(R.layout.trailers_list_item, null);
+                Button b = (Button) trailerView.findViewById(R.id.trailer_list_item_text);
+                Trailer tr = movie.getTrailer(i);
+                final String link = tr.getLink();
+
+                b.setText(tr.getName());
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Intent lightboxIntent = new Intent(view.getContext(), CustomLightboxActivity.class);
+                        lightboxIntent.putExtra(CustomLightboxActivity.KEY_VIDEO_ID, link);
+                        startActivity(lightboxIntent);
+                    }
+                });
+                linearList.addView(trailerView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
         }
 
         return view;
     }
 
-//        @Override
-//        protected void onPostExecute(Trailer[] trailerArray) {
-//
-//            super.onPostExecute(trailerArray);
-//            FetchUSDate fetchUSDate = new FetchUSDate();
-//            //fetchUSDate.execute(movieDetails[6], movieDetails[2]);
-//
-//            for (Trailer t : trailerArray) {
-//                trailers.add(t);
-//            }
-//            for (int i = 0; i < trailers.size(); i++) {
-//                View v = layoutInflater.inflate(R.layout.trailers_list_item, null);
-//                //TextView tv = (TextView) v.findViewById(R.id.trailer_list_item_text);
-//                Button b = (Button) v.findViewById(R.id.trailer_list_item_text);
-//                Trailer tr = trailers.get(i);
-//                final String link = tr.getLink();
-//                //tv.setText(tr.name);
-//                b.setText(tr.getName());
-//                b.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-//                        context.startActivity(browserIntent);
-//                    }
-//                });
-//
-//                linearList.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            }
-//        }
-    }
+
+}
 

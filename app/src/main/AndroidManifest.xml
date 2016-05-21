@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -33,6 +34,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.app.shovonh.mooveez.MainActivity" />
         </activity>
+        <activity
+            android:name=".CustomLightboxActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/AppTheme.Translucent" />
 
         <receiver android:name=".Receivers.ReleaseNotifications">
             <intent-filter>

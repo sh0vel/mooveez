@@ -47,11 +47,8 @@ public class ThisMonthFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public ThisMonthFragment newInstance(int page_number) {
+    public ThisMonthFragment newInstance() {
         ThisMonthFragment fragment = new ThisMonthFragment();
-        Bundle args = new Bundle();
-        // args.putInt(PAGE_NUM, page_number);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -63,6 +60,7 @@ public class ThisMonthFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(LOG_TAG, "Created");
         FetchThisMonthsMovies task = new FetchThisMonthsMovies();
         task.execute();
 
@@ -417,9 +415,7 @@ public class ThisMonthFragment extends Fragment {
         @Override
         protected void onPostExecute(MovieObj movieObj) {
             super.onPostExecute(movieObj);
-            //Log.v(LOG_TAG, "Movie name is " + movieObj.getTitle());
             if (Utilities.isThisMonth(movieObj.getReleaseDate())) {
-                Log.v(LOG_TAG, "Added " + movieObj.getTitle() + " with release date " + movieObj.getReleaseDate());
                 thisMonthsMovieList.add(movieObj);
                 adapter.setData(thisMonthsMovieList);
             }
