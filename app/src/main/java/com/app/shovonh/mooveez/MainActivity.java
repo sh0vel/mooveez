@@ -20,7 +20,7 @@ import com.app.shovonh.mooveez.data.AlarmDBHelper;
 
 import org.parceler.Parcels;
 
-public class MainActivity extends AppCompatActivity implements ThisMonthFragment.Callback {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public static AlarmDBHelper dbHelper;
@@ -28,17 +28,20 @@ public class MainActivity extends AppCompatActivity implements ThisMonthFragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "Created");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle(Utilities.getMonthName() + " Releases");
         toolbar.setTitleTextColor(Color.WHITE);
 
         FrameLayout card = (FrameLayout) findViewById(R.id.no_network_view);
 
         if (hasConnection(this)) {
             card.setVisibility(View.GONE);
-            Fragment fragment = new ThisMonthFragment().newInstance();
+            Fragment fragment = new MainActivityFragment().newInstance();
             getSupportFragmentManager().beginTransaction().add(R.id.container_grid, fragment).commit();
         }else{
             card.setOnClickListener(new View.OnClickListener() {

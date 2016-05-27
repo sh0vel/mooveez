@@ -35,20 +35,20 @@ import hirondelle.date4j.DateTime;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ThisMonthFragment extends Fragment {
-    private static final String LOG_TAG = ThisMonthFragment.class.getSimpleName();
+public class MainActivityFragment extends Fragment {
+    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     public static ImageAdapter adapter;
     public static ArrayList<MovieObj> tempList;
     public static ArrayList<MovieObj> thisMonthsMovieList;
     public static String SELECTED_MOVIE_BUNDLE_ID = "movie";
 
-    public ThisMonthFragment() {
+    public MainActivityFragment() {
         // Required empty public constructor
     }
 
-    public ThisMonthFragment newInstance() {
-        ThisMonthFragment fragment = new ThisMonthFragment();
+    public MainActivityFragment newInstance() {
+        MainActivityFragment fragment = new MainActivityFragment();
         return fragment;
     }
 
@@ -193,6 +193,8 @@ public class ThisMonthFragment extends Fragment {
                         .appendQueryParameter(PAGE, "1")
                         .appendQueryParameter(RELEASE_DATE_GTE, formatedDate(0))
                         .appendQueryParameter(RELEASE_DATE_LTE, formatedDate(1))
+                        //.appendQueryParameter(RELEASE_DATE_GTE, "2016-06-01")
+                        //.appendQueryParameter(RELEASE_DATE_LTE, "2016-06-30")
                         .appendQueryParameter(CERTIFICATION_COUNTRY, "US")
                         .appendQueryParameter(CERTIFICATION_LTE, "NC-17")
                         .appendQueryParameter(SORT_BY, "popularity.desc")
