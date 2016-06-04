@@ -20,7 +20,7 @@ import com.app.shovonh.mooveez.data.AlarmDBHelper;
 
 import org.parceler.Parcels;
 
-public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
+public class MainActivity extends AppCompatActivity implements MovieRecyclerFrag.Callback {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public static AlarmDBHelper dbHelper;
@@ -35,13 +35,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle(Utilities.getMonthName() + " Releases");
+        getSupportActionBar().setSubtitle("Powered by TMDb");
         toolbar.setTitleTextColor(Color.WHITE);
 
         FrameLayout card = (FrameLayout) findViewById(R.id.no_network_view);
 
         if (hasConnection(this)) {
             card.setVisibility(View.GONE);
-            Fragment fragment = new MainActivityFragment().newInstance();
+            Fragment fragment = new MovieRecyclerFrag().newInstance();
             getSupportFragmentManager().beginTransaction().add(R.id.container_grid, fragment).commit();
         }else{
             card.setOnClickListener(new View.OnClickListener() {

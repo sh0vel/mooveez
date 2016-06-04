@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.shovonh.mooveez.Objs.Cast;
 import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.Objs.Trailer;
 import com.squareup.picasso.Picasso;
@@ -29,7 +30,7 @@ public class MovieDetailsFrag extends Fragment {
 
 
     private static ImageView imgPoster, imgBackdrop;
-    private static TextView tvTitle, tvRelease, tvRating, tvDescription, tvTrailer1, tvTrailer2, tvGenres;
+    private static TextView tvTitle, tvRelease, tvDescription, tvGenres;
 
     public MovieDetailsFrag() {
         // Required empty public constructor
@@ -77,7 +78,7 @@ public class MovieDetailsFrag extends Fragment {
 
         if (movie.getTrailers().length > 0) {
             view.findViewById(R.id.no_trailers_text).setVisibility(View.GONE);
-            LinearLayout linearList = (LinearLayout) view.findViewById(R.id.add_list_items_here);
+            LinearLayout linearList = (LinearLayout) view.findViewById(R.id.add_trailer_items_here);
             for (int i = 0; i < movie.getTrailers().length; i++) {
                 View trailerView = inflater.inflate(R.layout.trailers_list_item, null);
                 Button b = (Button) trailerView.findViewById(R.id.trailer_list_item_text);
@@ -96,6 +97,26 @@ public class MovieDetailsFrag extends Fragment {
                 linearList.addView(trailerView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         }
+
+        if (movie.getCastMembers().length > 0){
+            LinearLayout linearList = (LinearLayout) view.findViewById(R.id.add_cast_items_here);
+            for (int i = 0; i  < movie.getCastMembers().length; i++){
+                Cast cast = movie.getCastMembers()[i];
+                if (!cast.getImg().equals("http://image.tmdb.org/t/p/w500/null")) {
+                    View viewCast = inflater.inflate(R.layout.item_cast, null);
+                    ImageView img = (ImageView) viewCast.findViewById(R.id.cast_img);
+                    TextView name = (TextView) viewCast.findViewById(R.id.cast_name);
+                    TextView charr = (TextView) viewCast.findViewById(R.id.cast_char);
+
+                    Picasso.with(getContext()).load(cast.getImg()).into(img);
+                    name.setText(cast.getName());
+                    charr.setText(cast.getCharacter());
+
+                    linearList.addView(viewCast, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
+            }
+
+        }else view.findViewById(R.id.text_cast).setVisibility(View.GONE);
 
         return view;
     }

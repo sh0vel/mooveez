@@ -21,7 +21,7 @@ import hirondelle.date4j.DateTime;
 public class RebootListener extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.v("RebootListener", "Reboot has been noticed, re setting all alarms");
+        Log.v("RebootListener", "Reboot has been noticed, re-setting all alarms");
         AlarmDBHelper dbHelper = new AlarmDBHelper(context);
         ArrayList<MovieObj> objs = dbHelper.getAllMovies();
         for (MovieObj m : objs){

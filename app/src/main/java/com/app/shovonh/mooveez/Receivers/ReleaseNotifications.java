@@ -25,7 +25,6 @@ public class ReleaseNotifications extends BroadcastReceiver{
                 .load()
                 .title(intent.getStringExtra(BUNDLE_ID_TITLE))
                 .message("Released Today!")
-                .smallIcon(R.mipmap.ic_launcher)
                 .largeIcon(R.mipmap.ic_launcher)
                 .identifier(intent.getIntExtra(BUNDLE_ID_ID, 1))
                 .autoCancel(true)

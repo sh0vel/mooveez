@@ -32,7 +32,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         final AlarmDBHelper dbHelper = new AlarmDBHelper(this);
-        movie = (MovieObj) Parcels.unwrap(getIntent().getParcelableExtra(ThisMonthFragment.SELECTED_MOVIE_BUNDLE_ID));
+        movie = (MovieObj) Parcels.unwrap(getIntent().getParcelableExtra(MovieRecyclerFrag.SELECTED_MOVIE_BUNDLE_ID));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (Utilities.alreadyReleased(movie.getReleaseDate())) {

@@ -26,16 +26,15 @@ public class MonthlyNotifications extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         DateTime d = DateTime.now(TimeZone.getDefault());
         Log.v(LOG_TAG, "Day: "+d.getDay());
-        if (d.getDay() == 01) {
+        if (d.getDay() == 1) {
             Log.v(LOG_TAG, "Notification Created");
             PugNotification.with(context)
                     .load()
                     .title("New Month, New Movies!")
                     .message("Tap to checkout this months most popular releases.")
-                    .smallIcon(R.mipmap.ic_launcher)
                     .largeIcon(R.mipmap.ic_launcher)
                     .click(MainActivity.class)
-                    .identifier(7)
+                    .identifier(d.getMonth())
                     .autoCancel(true)
                     .simple()
                     .build();
