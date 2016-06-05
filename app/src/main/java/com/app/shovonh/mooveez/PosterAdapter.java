@@ -38,7 +38,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_poster_img, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        view.setPadding(8,8,8,8);
+        view.setPadding(0,8,0,8);
         ViewHolder vh = new ViewHolder(view);
         return vh;
     }

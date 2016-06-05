@@ -87,9 +87,13 @@ public class MovieRecyclerFrag extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_this_month, container, false);
 
-        wheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-        if (!thisMonthsMovieList.isEmpty()) {
-            wheel.stopSpinning();
+
+        Log.v(LOG_TAG, "" + thisMonthsMovieList.size());
+        if (thisMonthsMovieList.isEmpty()) {
+             wheel =(ProgressWheel) view.findViewById(R.id.progress_wheel);
+            wheel.setVisibility(View.VISIBLE);
+            wheel.spin();
+
         }
 
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
@@ -341,17 +345,14 @@ public class MovieRecyclerFrag extends Fragment {
             tempList = new ArrayList<>();
             for (MovieObj m : movieObjs) {
                 tempList.add(m);
-                //adapter.setData(thisMonthsMovieList);
             }
-
-            Log.v(LOG_TAG, " tempList size: " + tempList.size());
-
 
             for (int i = 0; i < tempList.size(); i++) {
                 FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
                 fetchUUSDate.execute(tempList.get(i));
                 if (i == tempList.size() - 1) {
-                    wheel.stopSpinning();
+                   wheel.stopSpinning();
+                    wheel.setVisibility(View.INVISIBLE);
                 }
             }
         }
