@@ -1,5 +1,7 @@
 package com.app.shovonh.mooveez.Receivers;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +25,7 @@ public class MonthlyNotifications extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
         DateTime d = DateTime.now(TimeZone.getDefault());
-        Log.v(LOG_TAG, "Day: "+d.getDay());
-            Log.v(LOG_TAG, "Notification Created");
+        if (d.getDay() == 01) {
             PugNotification.with(context)
                     .load()
                     .title("New Month, New Movies!")
@@ -36,7 +37,17 @@ public class MonthlyNotifications extends BroadcastReceiver{
                     .autoCancel(true)
                     .simple()
                     .build();
-
-
     }
+    Log.v(LOG_TAG, "Next months notification created");
+
+    Intent i = new Intent(context, MonthlyNotifications.class);
+    PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+
+    String firstOfNext = d.getEndOfMonth().plusDays(1).format("MM-DD-YYYY");
+    DateTime dt = new DateTime(firstOfNext + " 06:00:00");
+
+    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    am.set(AlarmManager.RTC_WAKEUP, dt.getMilliseconds(TimeZone.getDefault()), pi);
+
+}
 }

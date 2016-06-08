@@ -37,17 +37,5 @@ public class RebootListener extends BroadcastReceiver {
             am.set(AlarmManager.RTC_WAKEUP, dt.getMilliseconds(TimeZone.getDefault()), pi);
         }
 
-        DateTime d = DateTime.now(TimeZone.getDefault());
-        Intent i = new Intent(context, MonthlyNotifications.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, d.getDay(), i, 0);
-
-        String firstOfNext = d.getEndOfMonth().plusDays(1).format("YYYY-MM-DD");
-        DateTime dt = new DateTime(firstOfNext + " 06:00:00");
-
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, dt.getMilliseconds(TimeZone.getDefault()), pi);
-
-        Log.v(LOG_TAG, "Next months notification created " + dt.getMilliseconds(TimeZone.getDefault()));
-
     }
 }
