@@ -46,6 +46,8 @@ public class MovieRecyclerFrag extends Fragment {
     private RecyclerView recyclerView;
     public static PosterAdapter posterAdapter;
 
+    public static int page = 1;
+
 
     public static ArrayList<MovieObj> tempList = new ArrayList<>();
     public static ArrayList<MovieObj> thisMonthsMovieList = new ArrayList<>();
@@ -63,19 +65,18 @@ public class MovieRecyclerFrag extends Fragment {
     }
 
 
-
     public interface Callback {
         public void onItemSelected(String id, MovieObj movieObj);
     }
-
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (thisMonthsMovieList.isEmpty()) {
+            tempList = new ArrayList<>();
             FetchThisMonthsMovies task = new FetchThisMonthsMovies();
-            task.execute();
+            task.execute(page);
         }
 
 
@@ -87,10 +88,8 @@ public class MovieRecyclerFrag extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_this_month, container, false);
 
-
-        Log.v(LOG_TAG, "" + thisMonthsMovieList.size());
         if (thisMonthsMovieList.isEmpty()) {
-             wheel =(ProgressWheel) view.findViewById(R.id.progress_wheel);
+            wheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
             wheel.setVisibility(View.VISIBLE);
             wheel.spin();
 
@@ -170,9 +169,8 @@ public class MovieRecyclerFrag extends Fragment {
     }
 
 
-
     ////////////////////////
-    public static class FetchThisMonthsMovies extends AsyncTask<MovieObj, ProgressWheel, MovieObj[]> {
+    public static class FetchThisMonthsMovies extends AsyncTask<Integer, ProgressWheel, MovieObj[]> {
         private final String LOG_TAG = FetchThisMonthsMovies.class.getSimpleName();
 
 
@@ -238,7 +236,7 @@ public class MovieRecyclerFrag extends Fragment {
         ////////////////////
         private String formatedDate(int o) {
             DateTime dt = DateTime.now(TimeZone.getDefault());
-            String start = dt.getStartOfMonth().format("YYYY-MM-DD");
+            String start = dt.getStartOfMonth().minusDays(1).getStartOfMonth().format("YYYY-MM-DD");
             String end = dt.getEndOfMonth().format("YYYY-MM-DD");
             if (o == 0)
                 return start;
@@ -247,12 +245,14 @@ public class MovieRecyclerFrag extends Fragment {
 
         ///////////////////////////
         @Override
-        protected MovieObj[] doInBackground(MovieObj... m) {
+        protected MovieObj[] doInBackground(Integer... integers) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             String _resultsJsonStr = null;
             String format = "json";
+
+            final int page = integers[0];
 
 
             try {
@@ -269,10 +269,10 @@ public class MovieRecyclerFrag extends Fragment {
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendQueryParameter(API_KEY, BuildConfig.THE_MOVIE_DB_API_KEY)
-                        .appendQueryParameter(PAGE, "1")
+                        .appendQueryParameter(PAGE, String.valueOf(page))
                         .appendQueryParameter(RELEASE_DATE_GTE, formatedDate(0))
                         .appendQueryParameter(RELEASE_DATE_LTE, formatedDate(1))
-                        //.appendQueryParameter(RELEASE_DATE_GTE, "2016-06-01")
+                        //.appendQueryParameter(RELEASE_DATE_GTE, "2016-05-01")
                         //.appendQueryParameter(RELEASE_DATE_LTE, "2016-06-30")
                         .appendQueryParameter(CERTIFICATION_COUNTRY, "US")
                         .appendQueryParameter(CERTIFICATION_LTE, "NC-17")
@@ -281,7 +281,6 @@ public class MovieRecyclerFrag extends Fragment {
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, "Built URI :" + builtUri.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -304,8 +303,6 @@ public class MovieRecyclerFrag extends Fragment {
                 }
 
                 _resultsJsonStr = buffer.toString();
-
-                // Log.v(LOG_TAG, "Result JSON STR: " + _resultsJsonStr);
 
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
@@ -335,25 +332,30 @@ public class MovieRecyclerFrag extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-           //wheel.spin();
+            //wheel.spin();
 
         }
 
         @Override
         protected void onPostExecute(MovieObj[] movieObjs) {
             super.onPostExecute(movieObjs);
-            tempList = new ArrayList<>();
             for (MovieObj m : movieObjs) {
                 tempList.add(m);
             }
 
-            for (int i = 0; i < tempList.size(); i++) {
-                FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
-                fetchUUSDate.execute(tempList.get(i));
-                if (i == tempList.size() - 1) {
-                   wheel.stopSpinning();
-                    wheel.setVisibility(View.INVISIBLE);
+            if (page == 2) {
+                for (int i = 0; i < tempList.size(); i++) {
+                    FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
+                    fetchUUSDate.execute(tempList.get(i));
+                    if (i == tempList.size() - 1) {
+                        wheel.stopSpinning();
+                        wheel.setVisibility(View.INVISIBLE);
+                    }
                 }
+            } else {
+                page++;
+                FetchThisMonthsMovies fetchThisMonthsMovies = new FetchThisMonthsMovies();
+                fetchThisMonthsMovies.execute(page);
             }
         }
     }
@@ -472,7 +474,6 @@ public class MovieRecyclerFrag extends Fragment {
 
                 _resultsJsonStr = buffer.toString();
 
-                // Log.v(LOG_TAG, "Result JSON STR: " + _resultsJsonStr);
 
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);

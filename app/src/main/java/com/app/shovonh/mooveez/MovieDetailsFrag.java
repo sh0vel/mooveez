@@ -26,14 +26,9 @@ public class MovieDetailsFrag extends Fragment {
     public static final String LOG_TAG = MovieDetailsFrag.class.getSimpleName();
 
     private static final String SELECTED_MOVIE_BUNDLE_ID = "param1";
-
-    // TODO: Rename and change types of parameters
-    //array 0:poster 1:title 2:release 3:rating 4:description
     MovieObj movie;
-
-
     private static ImageView imgPoster, imgBackdrop;
-    private static TextView tvTitle, tvRelease, tvDescription, tvGenres;
+    private static TextView tvTitle, tvRelease, tvDescription, tvGenres, noCast;
     private static CardView cardView;
 
     public MovieDetailsFrag() {
@@ -48,6 +43,8 @@ public class MovieDetailsFrag extends Fragment {
         imgBackdrop = (ImageView) view.findViewById(R.id.backdrop);
         tvGenres = (TextView) view.findViewById(R.id.genres);
         cardView = (CardView) view.findViewById(R.id.card_backdrop);
+        noCast = (TextView) view.findViewById(R.id.no_cast_text);
+
         //cardView.setMaxCardElevation(4);
     }
 
@@ -121,6 +118,9 @@ public class MovieDetailsFrag extends Fragment {
             for (int i = 0; i < movie.getCastMembers().length; i++) {
                 Cast cast = movie.getCastMembers()[i];
                 if (!cast.getImg().equals("http://image.tmdb.org/t/p/w500/null")) {
+                    if (noCast.getVisibility() == View.VISIBLE)
+                        noCast.setVisibility(View.GONE);
+
                     View viewCast = inflater.inflate(R.layout.item_cast, null);
                     ImageView img = (ImageView) viewCast.findViewById(R.id.cast_img);
                     TextView name = (TextView) viewCast.findViewById(R.id.cast_name);
@@ -161,12 +161,6 @@ public class MovieDetailsFrag extends Fragment {
 
         return view;
     }
-
-//    public class ScrollListner extends ScrollView{
-//        public ScrollListner(){
-//            super();
-//        }
-//    }
 
 
 }

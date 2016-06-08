@@ -142,7 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="No trailers yet.\nWill be updated shortly" />
+                        android:text="No trailers found." />
                 </LinearLayout>
 
                 <LinearLayout
@@ -159,6 +159,12 @@
                         android:gravity="center"
                         android:text="Cast"
                         android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+                    <TextView
+                        android:id="@+id/no_cast_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Cast information unavailable." />
                 </LinearLayout>
 
             </LinearLayout>

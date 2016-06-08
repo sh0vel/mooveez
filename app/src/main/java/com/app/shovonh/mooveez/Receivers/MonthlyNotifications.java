@@ -1,7 +1,5 @@
 package com.app.shovonh.mooveez.Receivers;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,29 +24,19 @@ public class MonthlyNotifications extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         DateTime d = DateTime.now(TimeZone.getDefault());
         Log.v(LOG_TAG, "Day: "+d.getDay());
-        if (d.getDay() == 1) {
             Log.v(LOG_TAG, "Notification Created");
             PugNotification.with(context)
                     .load()
                     .title("New Month, New Movies!")
                     .message("Tap to checkout this months most popular releases.")
                     .largeIcon(R.mipmap.ic_launcher)
+                    .smallIcon(R.drawable.small_icon)
                     .click(MainActivity.class)
                     .identifier(d.getMonth())
                     .autoCancel(true)
                     .simple()
                     .build();
-        }
-        Log.v(LOG_TAG, "Next months notification created");
 
-        Intent i = new Intent(context, MonthlyNotifications.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-
-        String firstOfNext = d.getEndOfMonth().plusDays(1).format("MM-DD-YYYY");
-        DateTime dt = new DateTime(firstOfNext + " 06:00:00");
-
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, dt.getMilliseconds(TimeZone.getDefault()), pi);
 
     }
 }

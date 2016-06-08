@@ -48,9 +48,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                 final PendingIntent pi = PendingIntent.getBroadcast(view.getContext(), movie.getId(), intent, PendingIntent.FLAG_ONE_SHOT);
                 String release = movie.getReleaseDate();
                 DateTime dt = new DateTime(release + " 06:00:00");
-
                 final AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, dt.getMilliseconds(TimeZone.getDefault()), pi);
+
+                //am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
 
                 dbHelper.insertData(movie.getTitle(), movie.getReleaseDate(), movie.getId());
 
@@ -79,7 +80,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.movie_details_activity, fragment).commit();
 
         }
-
     }
 
     @Override
@@ -94,12 +94,4 @@ public class MovieDetailActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.stay_still, R.anim.bottom_out);
 
     }
-
-    //    @Override
-//    public void onBackPressed() {
-//        finish();
-//        overridePendingTransition(R.anim.left_in, R.anim.right_out);
-//    }
-//
-
 }

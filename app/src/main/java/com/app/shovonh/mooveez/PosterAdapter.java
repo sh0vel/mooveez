@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.app.shovonh.mooveez.Objs.MovieObj;
+import com.pnikosis.materialishprogress.ProgressWheel;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -21,9 +23,11 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView picture;
+        public ProgressWheel wheel;
         public ViewHolder (final View itemView){
             super(itemView);
             picture = (ImageView) itemView.findViewById(R.id.img_poster);
+            wheel = (ProgressWheel) itemView.findViewById(R.id.progress_wheel_poster);
 
         }
     }
@@ -44,8 +48,20 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Picasso.with(mContext).load(mMovies.get(position).getCover()).resize(0, 750).into(holder.picture);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+
+        final Callback loadedCallback = new Callback() {
+            @Override
+            public void onSuccess() {
+                holder.wheel.stopSpinning();
+
+            }
+
+            @Override
+            public void onError() {
+            }
+        };
+        Picasso.with(mContext).load(mMovies.get(position).getCover()).resize(0, 750).into(holder.picture, loadedCallback);
     }
 
     @Override
