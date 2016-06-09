@@ -148,17 +148,6 @@ public class MovieDetailsFrag extends Fragment {
             }
 
         }
-
-//        ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
-//        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-//            @Override
-//            public void onScrollChanged() {
-//                cardView.setCardElevation(24);
-//            }
-//
-//        });
-
-
         return view;
     }
 

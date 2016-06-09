@@ -38,8 +38,21 @@ public class MainActivity extends AppCompatActivity implements MovieRecyclerFrag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle(Utilities.getMonthName() + " Releases");
+        getSupportActionBar().setSubtitle("Powered by TMDb");
+        toolbar.setTitleTextColor(Color.WHITE);
+
+        FrameLayout card = (FrameLayout) findViewById(R.id.no_network_view);
+
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getString("isReceiverSet", "no").equals("no")) {
+        String s = prefs.getString("isReceiverSet", "no");
+        if (s.equals("no")) {
             DateTime d = DateTime.now(TimeZone.getDefault());
             if (d.getDay() != 1) {
                 Intent i = new Intent(this, MonthlyNotifications.class);
@@ -56,21 +69,11 @@ public class MainActivity extends AppCompatActivity implements MovieRecyclerFrag
             }
         }
 
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setTitle(Utilities.getMonthName() + " Releases");
-        getSupportActionBar().setSubtitle("Powered by TMDb");
-        toolbar.setTitleTextColor(Color.WHITE);
-
-        FrameLayout card = (FrameLayout) findViewById(R.id.no_network_view);
-
         if (hasConnection(this)) {
             card.setVisibility(View.GONE);
             Fragment fragment = new MovieRecyclerFrag().newInstance();
             getSupportFragmentManager().beginTransaction().add(R.id.container_grid, fragment).commit();
-        }else{
+        } else {
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -114,12 +117,12 @@ public class MainActivity extends AppCompatActivity implements MovieRecyclerFrag
         startActivity(intent);
     }
 
-    public boolean hasConnection(Context context){
+    public boolean hasConnection(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if (networkInfo != null){
-            return  networkInfo.isConnected();
+        if (networkInfo != null) {
+            return networkInfo.isConnected();
         }
         return false;
     }

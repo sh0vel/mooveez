@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.data.notificationContract.MovieEntry;
@@ -73,12 +72,11 @@ public class AlarmDBHelper extends SQLiteOpenHelper{
             int movieID = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID);
             int releaseDate = cursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE);
             do{
-                Log.v(LOG_TAG, "Do loop entered");
+
                 MovieObj obj = new MovieObj(
                         cursor.getString(movieName), cursor.getString(releaseDate), cursor.getInt(movieID));
                 objs.add(obj);
             }while (cursor.moveToNext());
-            Log.v(LOG_TAG, "Cursor size: " + cursor.getCount() + " Array Size: " + objs.size());
         }
         cursor.close();
         return objs;
@@ -88,13 +86,8 @@ public class AlarmDBHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(MovieEntry.TABLE_NAME, MovieEntry.COLUMN_MOVIE_ID + " = ?",new String[]{String.valueOf(id)});
         db.close();
-        Log.v(LOG_TAG, "Deleted " + id);
         ArrayList<MovieObj> objs = getAllMovies();
-//        for (MovieObj m : objs){
-//
-//            Log.v(LOG_TAG, m.getTitle() + ", " + m.getReleaseDate() + ", " + m.getId());
-//            //dbHelper.deleteEntry(m.id);
-//        }
+
     }
 
 

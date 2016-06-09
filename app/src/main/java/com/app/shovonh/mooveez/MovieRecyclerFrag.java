@@ -99,7 +99,6 @@ public class MovieRecyclerFrag extends Fragment {
         posterAdapter = new PosterAdapter(thisMonthsMovieList, getContext());
         recyclerView.setAdapter(posterAdapter);
         recyclerView.setHasFixedSize(true);
-        //recyclerView.setPadding(8,8,8,8);
 
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 

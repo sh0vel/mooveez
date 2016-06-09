@@ -45,12 +45,12 @@
         <receiver android:name=".Receivers.MonthlyNotifications">
             <intent-filter>
                 <action android:name="NOTIFICATION_SERVICE" />
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver android:name=".Receivers.RebootListener">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
