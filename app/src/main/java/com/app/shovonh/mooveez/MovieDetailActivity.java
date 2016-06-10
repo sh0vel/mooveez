@@ -77,7 +77,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             Fragment fragment =
                     new MovieDetailsFrag().newInstance(movie);
-            getSupportFragmentManager().beginTransaction().add(R.id.movie_details_activity, fragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
 
         }
     }
