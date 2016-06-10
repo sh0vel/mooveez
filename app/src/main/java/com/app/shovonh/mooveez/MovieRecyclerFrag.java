@@ -97,6 +97,8 @@ public class MovieRecyclerFrag extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         posterAdapter = new PosterAdapter(thisMonthsMovieList, getContext());
+        recyclerView.addItemDecoration(new SpacesItemDecoration(8));
+
         recyclerView.setAdapter(posterAdapter);
         recyclerView.setHasFixedSize(true);
 
