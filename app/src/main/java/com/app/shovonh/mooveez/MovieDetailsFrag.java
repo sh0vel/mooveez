@@ -1,5 +1,6 @@
 package com.app.shovonh.mooveez;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,21 +27,21 @@ public class MovieDetailsFrag extends Fragment {
 
     private static final String SELECTED_MOVIE_BUNDLE_ID = "param1";
     MovieObj movie;
-    private static ImageView imgPoster, imgBackdrop;
-    private static TextView tvTitle, tvRelease, tvDescription, tvGenres, noCast;
+
+    private static TextView tvRelease, tvDescription, noCast;
 
 
     public MovieDetailsFrag() {
         // Required empty public constructor
     }
 
+    public static OnFragmentInteractionListener mListener;
+
     static void initializeView(View view) {
 
-        tvTitle = (TextView) view.findViewById(R.id.movie_title);
+
         tvRelease = (TextView) view.findViewById(R.id.release);
         tvDescription = (TextView) view.findViewById(R.id.description);
-        imgBackdrop = (ImageView) view.findViewById(R.id.backdrop);
-        tvGenres = (TextView) view.findViewById(R.id.genres);
         noCast = (TextView) view.findViewById(R.id.no_cast_text);
 
     }
@@ -69,24 +70,10 @@ public class MovieDetailsFrag extends Fragment {
         View view = inflater.inflate(com.app.shovonh.mooveez.R.layout.fragment_movie_details, container, false);
         initializeView(view);
 
-        final ProgressWheel wheel = (ProgressWheel) view.findViewById(R.id.progress_wheel2);
-        wheel.setVisibility(View.VISIBLE);
-        Picasso.with(getContext()).load(movie.getBackdrop()).into(imgBackdrop, new Callback() {
-            @Override
-            public void onSuccess() {
-                wheel.stopSpinning();
-            }
+        setUpActionBar(movie.getBackdrop(), movie.getTitle(), Utilities.genresToString(movie.getGenres()) );
 
-            @Override
-            public void onError() {
-
-            }
-        });
-
-        tvTitle.setText(movie.getTitle());
         tvRelease.setText(Utilities.dateFormatter(movie.getReleaseDate()));
         tvDescription.setText(movie.getDescription());
-        tvGenres.setText(Utilities.genresToString(movie.getGenres()));
 
         if (movie.getTrailers().length > 0) {
             view.findViewById(R.id.no_trailers_text).setVisibility(View.GONE);
@@ -146,6 +133,23 @@ public class MovieDetailsFrag extends Fragment {
 
         }
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        }
+    }
+
+    void setUpActionBar(String imgURL, String title, String genres){
+        mListener.setupActionBar(imgURL, title, genres);
+    }
+
+
+    public interface OnFragmentInteractionListener {
+        void setupActionBar(String imgURL, String title, String subtitle);
     }
 
 

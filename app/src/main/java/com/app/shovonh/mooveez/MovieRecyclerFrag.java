@@ -175,6 +175,7 @@ public class MovieRecyclerFrag extends Fragment {
         private final String LOG_TAG = FetchThisMonthsMovies.class.getSimpleName();
 
 
+
         private MovieObj[] getMovieDataFromJson(String _movieJsonStr)
                 throws JSONException {
 

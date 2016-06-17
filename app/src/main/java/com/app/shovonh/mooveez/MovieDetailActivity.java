@@ -5,15 +5,21 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.app.shovonh.mooveez.Objs.MovieObj;
 import com.app.shovonh.mooveez.Receivers.ReleaseNotifications;
 import com.app.shovonh.mooveez.data.AlarmDBHelper;
+import com.pnikosis.materialishprogress.ProgressWheel;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
@@ -21,9 +27,13 @@ import java.util.TimeZone;
 
 import hirondelle.date4j.DateTime;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements MovieDetailsFrag.OnFragmentInteractionListener{
     private static final String LOG_TAG = MovieDetailActivity.class.getSimpleName();
     private MovieObj movie;
+    ImageView backdrop;
+    TextView title, genres;
+    CollapsingToolbarLayout collapsingToolbarLayout;
+    ProgressWheel wheel;
 
 
     @Override
@@ -33,6 +43,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         final AlarmDBHelper dbHelper = new AlarmDBHelper(this);
         movie = (MovieObj) Parcels.unwrap(getIntent().getParcelableExtra(MovieRecyclerFrag.SELECTED_MOVIE_BUNDLE_ID));
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        backdrop = (ImageView) findViewById(R.id.image);
+        title = (TextView) findViewById(R.id.movie_title);
+        genres = (TextView) findViewById(R.id.genres);
+        wheel = (ProgressWheel) findViewById(R.id.progress_wheel2);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (Utilities.alreadyReleased(movie.getReleaseDate())) {
@@ -74,7 +89,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
-
             Fragment fragment =
                     new MovieDetailsFrag().newInstance(movie);
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
@@ -93,5 +107,22 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onPause();
         overridePendingTransition(R.anim.stay_still, R.anim.bottom_out);
 
+    }
+
+    @Override
+    public void setupActionBar(String imgURL, String title, String subtitle) {
+        Picasso.with(this).load(imgURL).into(backdrop, new Callback() {
+            @Override
+            public void onSuccess() {
+                wheel.stopSpinning();
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+        this.title.setText(title);
+        genres.setText(subtitle);
     }
 }
