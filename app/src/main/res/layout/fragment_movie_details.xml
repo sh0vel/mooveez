@@ -61,7 +61,7 @@
             android:id="@+id/text_cast"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_gap"
+            style="@style/Margins"
             android:gravity="center"
             android:text="Cast"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />

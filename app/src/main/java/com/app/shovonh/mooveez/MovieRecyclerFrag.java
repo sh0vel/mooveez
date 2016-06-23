@@ -374,6 +374,7 @@ public class MovieRecyclerFrag extends Fragment {
             final String RELEASE_COUNTRY = "iso_3166_1";
             final String RELEASE_ARRAY = "release_dates";
             final String RELEASE_DATE = "release_date";
+            final String RELEASE_TYPE = "type";
 
             final String TRAILER_OBJECT = "videos";
             final String TRAILER_RESULTS = "results";
@@ -397,7 +398,9 @@ public class MovieRecyclerFrag extends Fragment {
                     JSONArray releaseArray = releaseObject.getJSONArray(RELEASE_ARRAY);
                     JSONObject release = releaseArray.getJSONObject(releaseArray.length() - 1);
                     String newDate = release.getString(RELEASE_DATE).substring(0, 10);
+                    int type = release.getInt(RELEASE_TYPE);
                     movieObj.setReleaseDate(newDate);
+                    movieObj.setReleaseType(type);
                     break;
                 }
             }

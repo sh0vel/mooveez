@@ -4,23 +4,19 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <android.support.v7.widget.GridLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:columnCount="2">
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_column="0"
-            app:layout_row="0"
-            app:layout_rowSpan="2">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/cast_img"
                 android:layout_width="52dp"
                 android:layout_height="72dp"
-
                 android:scaleType="centerCrop"
                 android:src="@drawable/cast_img" />
 
@@ -32,37 +28,40 @@
                 android:layout_centerVertical="true"
                 wheel:matProg_barColor="@color/colorAccent"
                 wheel:matProg_progressIndeterminate="true" />
-
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/cast_name"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:text="James McAvoy"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            app:layout_row="0" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/cast_char"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:text="Charles Xavier"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@android:color/secondary_text_light"
-            app:layout_column="1"
-            app:layout_columnWeight="1"
-            app:layout_row="1" />
+            <TextView
+                android:id="@+id/cast_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="James McAvoy"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-    </android.support.v7.widget.GridLayout>
+            <TextView
+                android:id="@+id/cast_char"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Charles Xavier"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/secondary_text_light" />
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginBottom="@dimen/default_gap"/>
-
+        android:layout_marginBottom="@dimen/default_gap"
+        android:layout_marginLeft="68dp"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@android:color/darker_gray" />
 </LinearLayout>
-
-

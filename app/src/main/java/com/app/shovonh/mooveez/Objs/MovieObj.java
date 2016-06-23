@@ -11,13 +11,15 @@ import java.util.Arrays;
 public class MovieObj {
     String title, description, releaseDate, rating, cover, backdrop;
     int[] genres;
-    int id;
+    int id, releaseType;
     Trailer[] trailers;
     Cast[] castMembers;
 
     public MovieObj(){
 
     }
+
+
 
     public MovieObj(String title, String description, String releaseDate, String cover, String backdrop, int[] genres, int id) {
         this.title = title;
@@ -28,6 +30,7 @@ public class MovieObj {
         this.genres = new int[genres.length];
         this.genres = Arrays.copyOf(genres, genres.length);
         this.id = id;
+
     }
 
     public MovieObj(String title, String release, int id) {
@@ -90,6 +93,14 @@ public class MovieObj {
 
     public void setCastMembers(Cast[] castMembers) {
         this.castMembers = castMembers;
+    }
+
+    public int getReleaseType() {
+        return releaseType;
+    }
+
+    public void setReleaseType(int releaseType) {
+        this.releaseType = releaseType;
     }
 
 }
