@@ -54,6 +54,7 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".NotificationHandler"></activity>
     </application>
 
 </manifest>

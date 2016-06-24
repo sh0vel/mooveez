@@ -153,7 +153,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
                                     });
                             sb.show();
                         } else
-                        openMovieTicketInfo();
+                            openMovieTicketInfo();
                     } else {
                         fabToolbarLayout.show();
                     }

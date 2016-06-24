@@ -3,7 +3,9 @@ package com.app.shovonh.mooveez.Receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
+import com.app.shovonh.mooveez.NotificationHandler;
 import com.app.shovonh.mooveez.R;
 import com.app.shovonh.mooveez.data.AlarmDBHelper;
 
@@ -19,6 +21,10 @@ public class ReleaseNotifications extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_ID_TITLE, intent.getStringExtra(BUNDLE_ID_TITLE));
+
         PugNotification.with(context)
                 .load()
                 .title(intent.getStringExtra(BUNDLE_ID_TITLE))
@@ -26,6 +32,7 @@ public class ReleaseNotifications extends BroadcastReceiver {
                 .largeIcon(R.mipmap.ic_launcher)
                 .smallIcon(R.drawable.small_icon)
                 .identifier(intent.getIntExtra(BUNDLE_ID_ID, 1))
+                .click(NotificationHandler.class, bundle)
                 .autoCancel(true)
                 .simple()
                 .build();
@@ -34,6 +41,8 @@ public class ReleaseNotifications extends BroadcastReceiver {
 
 
     }
+
+
 
 
 }
