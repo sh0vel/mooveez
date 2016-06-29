@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -74,7 +75,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
             tickets.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (movie.getReleaseType() != 3) {
+                    if (movie.getReleaseType() != 3 && movie.getReleaseType() != 2) {
                         fabToolbarLayout.hide();
                         fab.hide();
                         Snackbar sb = Snackbar.make(view, "Not released in theatres.", Snackbar.LENGTH_LONG)
@@ -141,7 +142,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
                 @Override
                 public void onClick(View view) {
                     if (mAlreadyReleased) {
-                        if (movie.getReleaseType() != 3) {
+                        Log.v(LOG_TAG, "Release tyep: " + movie.getReleaseType());
+                        if (movie.getReleaseType() != 3 && movie.getReleaseType() != 2 ){
                             fab.hide();
                             Snackbar sb = Snackbar.make(view, "Not released in theatres.", Snackbar.LENGTH_LONG)
                                     .setCallback(new Snackbar.Callback() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -47,7 +48,8 @@ public class MovieRecyclerFrag extends Fragment {
     public static PosterAdapter posterAdapter;
 
     public static int page = 1;
-
+    public static int totalPages = 0;
+    public static int numOfResults = 0;
 
     public static ArrayList<MovieObj> tempList = new ArrayList<>();
     public static ArrayList<MovieObj> thisMonthsMovieList = new ArrayList<>();
@@ -175,7 +177,6 @@ public class MovieRecyclerFrag extends Fragment {
         private final String LOG_TAG = FetchThisMonthsMovies.class.getSimpleName();
 
 
-
         private MovieObj[] getMovieDataFromJson(String _movieJsonStr)
                 throws JSONException {
 
@@ -189,8 +190,15 @@ public class MovieRecyclerFrag extends Fragment {
             final String TMD_BACKDROP = "backdrop_path";
             final String TMD_GENRE_ARRAY = "genre_ids";
             final String TMD_ORIGINAL_LANGUAGE = "original_language";
+            final String TMD_TOTAL_PAGES = "total_pages";
+            final String TMD_NUM_OF_RESULTS = "total_results";
 
             JSONObject _moviesJson = new JSONObject(_movieJsonStr);
+            numOfResults = _moviesJson.getInt(TMD_NUM_OF_RESULTS);
+            totalPages = _moviesJson.getInt(TMD_TOTAL_PAGES);
+            if (totalPages > 4 )
+                totalPages = 4;
+
             JSONArray _moviesArray = _moviesJson.getJSONArray(TMD_RESULTS);
 
             ArrayList<MovieObj> _movies = new ArrayList<>();
@@ -345,14 +353,38 @@ public class MovieRecyclerFrag extends Fragment {
                 tempList.add(m);
             }
 
-            if (page == 2) {
-                for (int i = 0; i < tempList.size(); i++) {
-                    FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
-                    fetchUUSDate.execute(tempList.get(i));
-                    if (i == tempList.size() - 1) {
-                        wheel.stopSpinning();
-                        wheel.setVisibility(View.INVISIBLE);
+            if (page == totalPages) {
+                if (tempList.size() < 36) {
+                    for (int i = 0; i < tempList.size(); i++) {
+                        FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
+                        fetchUUSDate.execute(tempList.get(i));
+                        if (i == tempList.size() - 1) {
+                            wheel.stopSpinning();
+                            wheel.setVisibility(View.INVISIBLE);
+                        }
                     }
+                } else {
+                    for (int i = 0; i < 36; i++) {
+                        FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
+                        fetchUUSDate.execute(tempList.get(i));
+                    }
+                    new CountDownTimer(10000, 1000) {
+                        @Override
+                        public void onTick(long l) {
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            for (int i = 36; i < tempList.size(); i++) {
+                                FetchMovieAtributes fetchUUSDate = new FetchMovieAtributes();
+                                fetchUUSDate.execute(tempList.get(i));
+                                if (i == tempList.size() - 1) {
+                                    wheel.stopSpinning();
+                                    wheel.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        }
+                    }.start();
                 }
             } else {
                 page++;
@@ -396,12 +428,25 @@ public class MovieRecyclerFrag extends Fragment {
                 JSONObject releaseObject = releaseJsonArray.getJSONObject(i);
                 if (releaseObject.getString(RELEASE_COUNTRY).equals("US")) {
                     JSONArray releaseArray = releaseObject.getJSONArray(RELEASE_ARRAY);
-                    JSONObject release = releaseArray.getJSONObject(releaseArray.length() - 1);
-                    String newDate = release.getString(RELEASE_DATE).substring(0, 10);
-                    int type = release.getInt(RELEASE_TYPE);
-                    movieObj.setReleaseDate(newDate);
-                    movieObj.setReleaseType(type);
-                    break;
+                    if (releaseArray.length() == 1) {
+                        JSONObject release = releaseArray.getJSONObject(0);
+                        String newDate = release.getString(RELEASE_DATE).substring(0, 10);
+                        int type = release.getInt(RELEASE_TYPE);
+                        movieObj.setReleaseDate(newDate);
+                        movieObj.setReleaseType(type);
+                        break;
+                    } else {
+                        for (int j = 0; j < releaseArray.length(); j++) {
+                            JSONObject release = releaseArray.getJSONObject(j);
+                            if (release.getInt(RELEASE_TYPE) == 3) {
+                                String newDate = release.getString(RELEASE_DATE).substring(0, 10);
+                                int type = release.getInt(RELEASE_TYPE);
+                                movieObj.setReleaseDate(newDate);
+                                movieObj.setReleaseType(type);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
